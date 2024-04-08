@@ -1,6 +1,7 @@
 <?php defined("BASEPATH") or exit("No direct script access allowed");
 
-class AdminsController extends CI_Controller {
+class AdminsController extends CI_Controller
+    {
     public function __construct() {
         parent::__construct();
         $this->load->model("AdminModel");
@@ -71,6 +72,13 @@ class AdminsController extends CI_Controller {
         }  else {
             $this->load->view("admin/product_view");
         }
+    }
+    public function view_category()
+    {
+        if (!$this->session->userdata("logged_in")) {
+            redirect('AdminsController/view_login_form');
+        }
+        $this->load->view("admin/category_view");
     }
     public function process_logout() {
         $this->session->sess_destroy();
