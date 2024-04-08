@@ -58,17 +58,18 @@ class AdminsController extends CI_Controller {
                 $this->session->set_userdata("adminId", $isLoggedIn["adminId"]);
                 $this->session->set_userdata("adminFirstName", $isLoggedIn["adminFirstName"]);
                 $this->session->set_userdata("logged_in", TRUE);
-                redirect("AdminsController/view_dashboard");
+                redirect("AdminsController/view_product");
             } else {
                 $this->session->set_flashdata("errors", array("message" => "Wrong credentials. Please try again."));
                 $this->load->view("admin/login_view");
             }
         }
     }
-    public function view_dashboard() {
+    public function view_product() {
         if (!$this->session->userdata('logged_in')) {
             redirect('AdminsController/view_login_form');
-            return; /* Prevent further code execution */
+        }  else {
+            $this->load->view("admin/product_view");
         }
     }
     public function process_logout() {
