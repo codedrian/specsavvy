@@ -28,7 +28,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
         <header>
             <h1>Let’s provide fresh items for everyone.</h1>
 
-            <p class="text-danger">Welcome, <?= $this->session->userdata("adminFirstName");?></p>
+            <!-- <p class="text-danger">Welcome, <?= $this->session->userdata("adminFirstName"); ?></p> -->
             <h2 class="">Products</h2>
             <div>
                 <a class="switch" href="catalogue.html">Switch to Shop View</a>
@@ -49,13 +49,16 @@ defined("BASEPATH") or exit("No direct script access allowed");
             <ul>
                 <li><a href="admin_orders.html">Orders</a></li>
                 <li class="active"><a href="#">Products</a></li>
+                <li><a href="<?=base_url("AdminsController/view_category")?>">Categories</a></li>
             </ul>
         </aside>
         <section>
             <form action="process.php" method="post" class="search_form">
                 <input type="text" name="search" placeholder="Search Products">
             </form>
+            <!-- NOTE: This is the button modal categories -->
             <button class="add_product" data-toggle="modal" data-target="#add_product_modal">Add Product</button>
+            <!-- NOTE: This is the sidebar button -->
             <form action="process.php" method="post" class="status_form">
                 <h3>Categories</h3>
                 <ul>
@@ -69,24 +72,6 @@ defined("BASEPATH") or exit("No direct script access allowed");
                         <button type="submit">
                             <span>36</span><img src="../assets/images/pending_icon.svg" alt="#">
                             <h4>Pending</h4>
-                        </button>
-                    </li>
-                    <li>
-                        <button type="submit">
-                            <span>36</span><img src="../assets/images/on_process_icon.svg" alt="#">
-                            <h4>On-Process</h4>
-                        </button>
-                    </li>
-                    <li>
-                        <button type="submit">
-                            <span>36</span><img src="../assets/images/shipped_icon.svg" alt="#">
-                            <h4>Shipped</h4>
-                        </button>
-                    </li>
-                    <li>
-                        <button type="submit">
-                            <span>36</span><img src="../assets/images/delivered_icon.svg" alt="#">
-                            <h4>Delivered</h4>
                         </button>
                     </li>
                 </ul>
@@ -208,6 +193,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
                 </table>
             </div>
         </section>
+        <!-- FEATURE: This is modal for Adding a Product -->
         <div class="modal fade form_modal" id="add_product_modal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -240,6 +226,36 @@ defined("BASEPATH") or exit("No direct script access allowed");
                             <li>
                                 <input type="number" name="inventory" value="1" required>
                                 <label>Inventory</label>
+                            </li>
+                            <li>
+                                <label>Upload Images (5 Max)</label>
+                                <ul>
+                                    <li><button type="button" class="upload_image"></button></li>
+                                </ul>
+                                <input type="file" name="image" accept="image/*">
+                            </li>
+                        </ul>
+                        <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
+                        <button type="submit">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- FEATURE: This is modal for Adding a Category -->
+        <div class="modal fade form_modal" id="add_category_modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <button data-dismiss="modal" aria-label="Close" class="close_modal"></button>
+                    <form class="delete_product_form" action="process.php" method="post">
+                        <h2>Add a Category</h2>
+                        <ul>
+                            <li>
+                                <input type="text" name="prouct_name" required>
+                                <label>Category Name</label>
+                            </li>
+                            <li>
+                                <textarea name="description" required></textarea>
+                                <label>Description</label>
                             </li>
                             <li>
                                 <label>Upload Images (5 Max)</label>
