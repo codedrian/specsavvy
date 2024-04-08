@@ -36,16 +36,43 @@ class AdminsController extends CI_Controller {
         } else {
             $errors = array(validation_errors());
             $this->session->set_flashdata('errors', $errors);
-            $this->session->set_flashdata('user_input', $signupInput);
             $this->load->view("admin/signup_view");
         }
     }
     public function process_login_form() {
         $loginInput = array(
-            "email_address" => $this->input->post("email_address"),
-            "user_password" => $this->input->post("password"),
+            "email_address" => $this->input->post("email_address", TRUE),
+            "password" => $this->input->post("password", TRUE),
         );
-        var_dump($loginInput);
-        /* $this->AdminModel->validate_login($loginInput); */
+
+        $result = $this->AdminModel->validate_login_form($loginInput);
+        if ($result === FALSE) {
+            $errors = array(validation_errors());
+            $this->session->set_flashdata("errors", $errors);
+            $this->load->view("admin/login_view");
+        } else {
+           /*  NOTE: Verify the password and proceed to login if inputted password is correct */
+            $isLoggedIn = $this->AdminModel->process_login_form($loginInput);
+            if ($isLoggedIn["success"] == TRUE) {
+                /*  NOTE: Store User id in session */
+                $this->session->set_userdata("adminId", $isLoggedIn["adminId"]);
+                $this->session->set_userdata("adminFirstName", $isLoggedIn["adminFirstName"]);
+                $this->session->set_userdata("logged_in", TRUE);
+                redirect("AdminsController/view_dashboard");
+            } else {
+                $this->session->set_flashdata("errors", array("message" => "Wrong credentials. Please try again."));
+                $this->load->view("admin/login_view");
+            }
+        }
+    }
+    public function view_dashboard() {
+        if (!$this->session->userdata('logged_in')) {
+        redirect('AdminsController/view_login_form');
+        return; // Prevent further code execution
+    }
+    }
+    public function process_logout() {
+        $this->session->sess_destroy();
+        redirect("AdminsController/view_login_form");
     }
 }

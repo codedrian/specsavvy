@@ -38,6 +38,8 @@ defined("BASEPATH") or exit("No direct script access allowed")
 </script>
 
 <body>
+    <?php $this->load->view("partials/flash_messages"); ?>
+    <?= var_dump($this->session->all_userdata()); ?>
     <div class="wrapper">
         <a href="/dashboard"><img src="../assets/images/organic_shop_logo_large.svg" alt="Organic Shop"></a>
         <form action="<?= base_url("AdminsController/process_login_form") ?>" method="post" class="login_form">

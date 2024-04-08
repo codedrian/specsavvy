@@ -35,7 +35,37 @@ class AdminModel extends CI_Model {
             return FALSE;
         }
     }
-    public function validate_login($loginInput) {
-        
+    public function validate_login_form($loginInput) {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules("email_address", "Email", "required|trim|valid_email");
+        $this->form_validation->set_rules("password", "Password", "required");
+
+        if ($this->form_validation->run() == TRUE) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+
+    }
+    public function process_login_form($loginInput) {
+        $email = $loginInput["email_address"];
+        $password = $loginInput["password"];
+
+        $sql = "SELECT * FROM admin WHERE email_address = ?";
+        $result = $this->db->query($sql, array($email));
+
+        if ($result && $result->num_rows() > 0) {
+            $row = $result->row_array();
+            if (password_verify($password, $row["hashed_password"]) == TRUE) {
+                return array(
+                    "success" => TRUE,
+                    "adminId" => $row["admin_id"],
+                    "adminFirstName" => $row["first_name"],
+                );
+            }
+        }
+        return array(
+            "success" => FALSE,
+        );
     }
 }
