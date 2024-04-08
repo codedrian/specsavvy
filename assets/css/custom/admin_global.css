@@ -232,7 +232,7 @@ body .wrapper > section .search_form input {
 body .wrapper > section .search_form input::placeholder {
   color: #A1A1A1;
 }
-body .wrapper > section .add_product {
+body .wrapper > section .add_product, .add_category{
   background-color: #9C89FF;
   border-radius: 10px;
   border: none;
@@ -247,10 +247,11 @@ body .wrapper > section .add_product {
   top: 70px;
   z-index: 3;
 }
-body .wrapper > section .add_product:hover {
+body .wrapper > section .add_product:hover, .add_category:hover {
   opacity: 0.8;
 }
-body .wrapper > section .add_product::before {
+
+body .wrapper > section .add_product::before, .add_category::before{
   background-image: url("../../images/plus.svg");
   content: "";
   display: inline-block;
