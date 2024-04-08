@@ -54,7 +54,7 @@ class AdminsController extends CI_Controller {
            /*  NOTE: Verify the password and proceed to login if inputted password is correct */
             $isLoggedIn = $this->AdminModel->process_login_form($loginInput);
             if ($isLoggedIn["success"] == TRUE) {
-                /*  NOTE: Store User id in session */
+                /*  NOTE: Store Admin datas in session */
                 $this->session->set_userdata("adminId", $isLoggedIn["adminId"]);
                 $this->session->set_userdata("adminFirstName", $isLoggedIn["adminFirstName"]);
                 $this->session->set_userdata("logged_in", TRUE);
@@ -67,9 +67,9 @@ class AdminsController extends CI_Controller {
     }
     public function view_dashboard() {
         if (!$this->session->userdata('logged_in')) {
-        redirect('AdminsController/view_login_form');
-        return; // Prevent further code execution
-    }
+            redirect('AdminsController/view_login_form');
+            return; /* Prevent further code execution */
+        }
     }
     public function process_logout() {
         $this->session->sess_destroy();
