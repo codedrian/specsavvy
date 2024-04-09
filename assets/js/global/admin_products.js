@@ -57,7 +57,7 @@ $(document).ready(function() {
             processData:false,
             success: function(res) {
                 let form_data_action = $('.form_data_action').val();
-                
+
                 if(form_data_action == "add_product" || form_data_action == "edit_product") {
                     if(parseInt(res) == 0) {
                         $(".product_content").html(res);
@@ -78,9 +78,9 @@ $(document).ready(function() {
                 ($(".image_preview_list").children().length >= 4) ? $(".upload_image").addClass("hidden") : $(".upload_image").removeClass("hidden");
             }
         });
- 
+
         return false;
-    }); 
+    });
 
     $("body").on("submit", ".categories_form", function() {
         filterProducts(form)
