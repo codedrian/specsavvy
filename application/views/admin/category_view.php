@@ -8,7 +8,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products</title>
+    <title>Categories</title>
 
     <script src="../assets/js/vendor/jquery.min.js"></script>
     <script src="../assets/js/vendor/popper.min.js"></script>
@@ -18,7 +18,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
     <link rel="stylesheet" href="../assets/css/vendor/bootstrap-select.min.css">
 
     <link rel="stylesheet" href="../assets/css/custom/admin_global.css">
-    <script src="../assets/js/global/admin_products.js"></script>
+    <script src="../assets/js/global/admin_categories.js"></script>
 </head>
 <script>
 </script>
@@ -119,54 +119,6 @@ defined("BASEPATH") or exit("No direct script access allowed");
                 </table>
             </div>
         </section>
-        <!-- FEATURE: This is modal for Adding a Product -->
-        <div class="modal fade form_modal" id="add_product_modal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <button data-dismiss="modal" aria-label="Close" class="close_modal"></button>
-                    <form class="delete_product_form" action="process.php" method="post">
-                        <h2>Add a Product</h2>
-                        <ul>
-                            <li>
-                                <input type="text" name="prouct_name" required>
-                                <label>Product Name</label>
-                            </li>
-                            <li>
-                                <textarea name="description" required></textarea>
-                                <label>Description</label>
-                            </li>
-                            <li>
-                                <label>Category</label>
-                                <select class="selectpicker">
-                                    <option>Vegetables</option>
-                                    <option>Fruits</option>
-                                    <option>Pork</option>
-                                    <option>Beef</option>
-                                    <option>Chicken</option>
-                                </select>
-                            </li>
-                            <li>
-                                <input type="number" name="price" value="1" required>
-                                <label>Price</label>
-                            </li>
-                            <li>
-                                <input type="number" name="inventory" value="1" required>
-                                <label>Inventory</label>
-                            </li>
-                            <li>
-                                <label>Upload Images (5 Max)</label>
-                                <ul>
-                                    <li><button type="button" class="upload_image"></button></li>
-                                </ul>
-                                <input type="file" name="image" accept="image/*">
-                            </li>
-                        </ul>
-                        <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
-                        <button type="submit">Save</button>
-                    </form>
-                </div>
-            </div>
-        </div>
         <!-- FEATURE: This is modal for Adding a Category -->
         <div class="modal fade form_modal" id="add_category_modal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
