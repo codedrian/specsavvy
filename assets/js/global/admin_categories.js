@@ -44,11 +44,17 @@ $(document).ready(function() {
         $(".add_product_form").trigger("submit");
         $(".add_product_form").attr("data-modal-action", 0);
         $(".form_data_action").find("textarea").addClass("jhaver");
-
     });
-
-    $("body").on("submit", ".add_product_form", function() {
-        $.ajax({
+    /* FIXME: This handles hte adding of category */
+   /*  $("#add_category_form").on("submit", function(e) {
+        e.preventDefault();
+        $form_data = $(this).serialize();
+        $.post("CategoriesController/process_add_category",$form_data,function(response) {
+            console.log(response);
+        });
+        return false;
+    }); */
+        /* $.ajax({
             url: $(this).attr("action"),
             type: 'POST',
             data: new FormData(this),
@@ -80,7 +86,7 @@ $(document).ready(function() {
         });
 
         return false;
-    });
+    }); */
 
     $("body").on("submit", ".categories_form", function() {
         filterProducts(form)
@@ -115,7 +121,7 @@ $(document).ready(function() {
 
     $("body").on("click", ".edit_product", function() {
         $("input[name=edit_product_id]").val($(this).val());
-        $("#add_product_modal").modal("show");
+        $("#add_category_modal").modal("show");
         $(".form_data_action").val("edit_product");
         $(".add_product_form").attr("data-modal-action", 1);
         $("#add_product_modal").find("h2").text("Edit product #" + $(this).val());
@@ -134,9 +140,9 @@ $(document).ready(function() {
 });
 
 function resetAddProductForm() {
-    $(".add_product_form").find("textarea, input[name=product_name], input[name=price], input[name=inventory]").attr("value", "").text("");
+    $(".add_category_form").find("textarea, input[name=category_name]").attr("value", "").text("");
     $('select[name=categories]').find("option").removeAttr("selected").closest("select").val("1").selectpicker('refresh');
-    $(".add_product_form")[0].reset();
+    $(".add_category_form")[0].reset();
     $(".image_label").find("span").remove();
     $(".image_preview_list").children().remove();
     $("#add_product_modal").find("h2").text("Add a Product");
