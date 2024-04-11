@@ -9,18 +9,37 @@ defined("BASEPATH") or exit("No direct script access allowed");
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Categories</title>
-
     <script src="../assets/js/vendor/jquery.min.js"></script>
+    <!--  <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script> -->
     <script src="../assets/js/vendor/popper.min.js"></script>
     <script src="../assets/js/vendor/bootstrap.min.js"></script>
     <script src="../assets/js/vendor/bootstrap-select.min.js"></script>
     <link rel="stylesheet" href="../assets/css/vendor/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/css/vendor/bootstrap-select.min.css">
-
     <link rel="stylesheet" href="../assets/css/custom/admin_global.css">
-    <script src="../assets/js/global/admin_categories.js"></script>
+    <!--    <script src="../assets/js/global/admin_categories.js"></script> -->
+    <script>
+        $(document).ready(function() {
+            $("#add_category_form").submit(function(e) {
+                e.preventDefault();
+                let url = $(this).attr("action");
+                let formData = $(this).serialize();
+                console.log(formData);
+
+                $.post(url, formData, function(response) {
+                    console.log(response);
+                    /* Set the returned newly created hash and name to the form's token name and value*/
+                    csrfName = response.csrfName;
+                    $("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.newCsrfToken);
+                }, "json");
+                return false;
+            });
+        });
+    </script>
+
 </head>
 <script>
+    
 </script>
 
 <body>
@@ -113,8 +132,6 @@ defined("BASEPATH") or exit("No direct script access allowed");
                                 </form>
                             </td>
                         </tr>
-
-
                     </tbody>
                 </table>
             </div>
@@ -124,27 +141,25 @@ defined("BASEPATH") or exit("No direct script access allowed");
             <div class="modal-dialog">
                 <div class="modal-content">
                     <button data-dismiss="modal" aria-label="Close" class="close_modal"></button>
-                    <form class="add_category_form" action="<?= base_url("CategoriesController/process_add_category") ?>" method="post">
-                        <!-- NOTE: This generated a CSRF token -->
-                        <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
+                    <form id="add_category_form" action="<?= base_url("CategoriesController/process_add_category") ?>" method="post">
+                        <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>" />
                         <h2>Add a Category</h2>
                         <ul>
                             <li>
-                                <input type="text" name="product_name" required>
+                                <input type="text" name="category_name" required>
                                 <label>Category Name</label>
                             </li>
                             <li>
                                 <textarea name="description" required></textarea>
                                 <label>Description</label>
                             </li>
-                            <li>
-                                <label>Upload Images (5 Max)</label>
-                                <ul>
+                            <label>Upload Images (5 Max)</label>
+                            <!--  <ul>
                                     <li><button type="button" class="upload_image"></button></li>
-                                </ul>
-                                <input type="file" name="image" accept="image/*">
-                            </li>
+                                </ul> -->
+                            <input type="file" name="image" accept="image/*">
                         </ul>
+                        <!-- FIXME: center the content of this last li tag -->
                         <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
                         <button type="submit">Save</button>
                     </form>
