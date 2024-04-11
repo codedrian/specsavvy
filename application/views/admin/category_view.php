@@ -22,16 +22,28 @@ defined("BASEPATH") or exit("No direct script access allowed");
         $(document).ready(function() {
             $("#add_category_form").submit(function(e) {
                 e.preventDefault();
-                let url = $(this).attr("action");
-                let formData = $(this).serialize();
-                console.log(formData);
+                if ($("#category_image").val() == "") {
+                    alert("Please add an image");
+                }
 
-                $.post(url, formData, function(response) {
-                    console.log(response);
-                    /* Set the returned newly created hash and name to the form's token name and value*/
-                    csrfName = response.csrfName;
-                    $("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.newCsrfToken);
-                }, "json");
+                let formData = new FormData(this);
+                $.ajax({
+                    url: "<?= base_url(''); ?>CategoriesController/process_add_category",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType: "json",
+                    success: function(response) {
+                        console.log(response);
+                        csrfName = response.csrfName;
+                        $("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.newCsrfToken);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error:", status, error);
+                    }
+                });
+
                 return false;
             });
         });
@@ -39,7 +51,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
 
 </head>
 <script>
-    
+
 </script>
 
 <body>
@@ -55,6 +67,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
                     <img src="../assets/images/profile.png" alt="#">
                 </button>
             </div>
+
             <div class="dropdown show">
                 <a class="btn btn-secondary dropdown-toggle profile_dropdown" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
                 <div class="dropdown-menu admin_dropdown" aria-labelledby="dropdownMenuLink">
@@ -136,17 +149,17 @@ defined("BASEPATH") or exit("No direct script access allowed");
                 </table>
             </div>
         </section>
-        <!-- FEATURE: This is modal for Adding a Category -->
+        <!-- NOTE: This is modal for Adding a Category -->
         <div class="modal fade form_modal" id="add_category_modal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <button data-dismiss="modal" aria-label="Close" class="close_modal"></button>
-                    <form id="add_category_form" action="<?= base_url("CategoriesController/process_add_category") ?>" method="post">
+                    <form id="add_category_form" action="<?= base_url("CategoriesController/process_add_category") ?>" method="post" enctype="multipart/form-data">
                         <input type="hidden" name="<?= $this->security->get_csrf_token_name() ?>" value="<?= $this->security->get_csrf_hash() ?>" />
                         <h2>Add a Category</h2>
                         <ul>
                             <li>
-                                <input type="text" name="category_name" required>
+                                <input type="text" name="name" required>
                                 <label>Category Name</label>
                             </li>
                             <li>
@@ -154,10 +167,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
                                 <label>Description</label>
                             </li>
                             <label>Upload Images (5 Max)</label>
-                            <!--  <ul>
-                                    <li><button type="button" class="upload_image"></button></li>
-                                </ul> -->
-                            <input type="file" name="image" accept="image/*">
+                            <input type="file" name="image" id="category_image" accept="image/*">
                         </ul>
                         <!-- FIXME: center the content of this last li tag -->
                         <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
