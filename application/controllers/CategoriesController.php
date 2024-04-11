@@ -9,10 +9,19 @@ class CategoriesController extends CI_Controller
     }
     public function process_add_category()
     {
+		$name = $this->input->post("name", TRUE);
+		$description = $this->input->post("description", TRUE);
+        $uploaded_image = $_FILES["image"];
+		/*$category_data = array(
+			"category_name" => $name,
+			"category_description" => $description,
+			"uploaded_image" => $uploaded_image
+		); */
         $response = array(
-            "message" => "Added category successfully!",
-            "csrfName" => $this->security->get_csrf_token_name(),
-            "newCsrfToken" => $this->security->get_csrf_hash()
+            "newCsrfToken" => $this->security->get_csrf_hash(),
+            "message" => "success",
+            "category_description" => $description,
+            "uploaded_image" => $uploaded_image
         );
         echo json_encode($response);
     }
