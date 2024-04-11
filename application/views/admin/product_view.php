@@ -241,36 +241,6 @@ defined("BASEPATH") or exit("No direct script access allowed");
                 </div>
             </div>
         </div>
-        <!-- FEATURE: This is modal for Adding a Category -->
-        <div class="modal fade form_modal" id="add_category_modal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <button data-dismiss="modal" aria-label="Close" class="close_modal"></button>
-                    <form class="delete_product_form" action="process.php" method="post">
-                        <h2>Add a Category</h2>
-                        <ul>
-                            <li>
-                                <input type="text" name="prouct_name" required>
-                                <label>Category Name</label>
-                            </li>
-                            <li>
-                                <textarea name="description" required></textarea>
-                                <label>Description</label>
-                            </li>
-                            <li>
-                                <label>Upload Images (5 Max)</label>
-                                <ul>
-                                    <li><button type="button" class="upload_image"></button></li>
-                                </ul>
-                                <input type="file" name="image" accept="image/*">
-                            </li>
-                        </ul>
-                        <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
-                        <button type="submit">Save</button>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
     <div class="popover_overlay"></div>
 </body>
