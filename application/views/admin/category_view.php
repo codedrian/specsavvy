@@ -18,14 +18,11 @@ defined("BASEPATH") or exit("No direct script access allowed");
     <link rel="stylesheet" href="../assets/css/vendor/bootstrap-select.min.css">
     <link rel="stylesheet" href="../assets/css/custom/admin_global.css">
     <!--    <script src="../assets/js/global/admin_categories.js"></script> -->
+	<!--TODO: Clear the input field if user submitted successfully-->
     <script>
         $(document).ready(function() {
             $("#add_category_form").submit(function(e) {
                 e.preventDefault();
-                if ($("#category_image").val() == "") {
-                    alert("Please add an image");
-                }
-
                 let formData = new FormData(this);
                 $.ajax({
                     url: "<?= base_url(''); ?>CategoriesController/process_add_category",
@@ -35,13 +32,20 @@ defined("BASEPATH") or exit("No direct script access allowed");
                     contentType: false,
                     dataType: "json",
                     success: function(response) {
-                        console.log(response);
-                        csrfName = response.csrfName;
+						if (response.status === "success") {
                         $("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.newCsrfToken);
+						alert("Category added successfully");
+						} else {
+							csrfName = response.csrfName;
+							$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.newCsrfToken);}
+							console.log(response);
+							$.each(response.error, function(field, error) {
+								$("#" + field).html(error);
+							});
                     },
-                    error: function(xhr, status, error) {
-                        console.error("AJAX Error:", status, error);
-                    }
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.error("AJAX Error:", textStatus, errorThrown);
+					}
                 });
 
                 return false;
@@ -159,18 +163,21 @@ defined("BASEPATH") or exit("No direct script access allowed");
                         <h2>Add a Category</h2>
                         <ul>
                             <li>
-                                <input type="text" name="name" required>
+                                <input type="text" name="name" class="category_name" required>
                                 <label>Category Name</label>
+								<span id="name_error"></span>
                             </li>
+
                             <li>
                                 <textarea name="description" required></textarea>
                                 <label>Description</label>
+								<span id="description_error"></span>
                             </li>
                             <label>Upload Images (5 Max)</label>
                             <input type="file" name="image" id="category_image" accept="image/*">
                         </ul>
                         <!-- FIXME: center the content of this last li tag -->
-                        <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
+						<button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
                         <button type="submit">Save</button>
                     </form>
                 </div>
@@ -181,3 +188,23 @@ defined("BASEPATH") or exit("No direct script access allowed");
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
