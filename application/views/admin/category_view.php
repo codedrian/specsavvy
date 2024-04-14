@@ -18,7 +18,6 @@ defined("BASEPATH") or exit("No direct script access allowed");
     <link rel="stylesheet" href="../assets/css/vendor/bootstrap-select.min.css">
     <link rel="stylesheet" href="../assets/css/custom/admin_global.css">
     <!--    <script src="../assets/js/global/admin_categories.js"></script> -->
-	<!--TODO: Clear the input field if user submitted successfully-->
     <script>
         $(document).ready(function() {
             $("#add_category_form").submit(function(e) {
@@ -32,20 +31,22 @@ defined("BASEPATH") or exit("No direct script access allowed");
                     contentType: false,
                     dataType: "json",
                     success: function(response) {
-						if (response.status === "success") {
-                        $("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.newCsrfToken);
-						alert("Category added successfully");
-						} else {
-							csrfName = response.csrfName;
-							$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.newCsrfToken);}
-							console.log(response);
-							$.each(response.error, function(field, error) {
-								$("#" + field).html(error);
-							});
+                        if (response.response.status === "success") {
+                            alert("Category added successfully");
+                            $("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
+                            /* NOTE: Clear thr input fields after successful submission */
+                            $('.clearable').val('');
+                        } else {
+                            $("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
+                        }
+                        console.log(response);
+                        $.each(response.response.error, function(field, error) {
+                            $("#" + field).html(error);
+                        });
                     },
-					error: function(jqXHR, textStatus, errorThrown) {
-						console.error("AJAX Error:", textStatus, errorThrown);
-					}
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error("AJAX Error:", textStatus, errorThrown);
+                    }
                 });
 
                 return false;
@@ -163,21 +164,21 @@ defined("BASEPATH") or exit("No direct script access allowed");
                         <h2>Add a Category</h2>
                         <ul>
                             <li>
-                                <input type="text" name="name" class="category_name" required>
+                                <input type="text" name="name" class='clearable' required>
                                 <label>Category Name</label>
-								<span id="name_error"></span>
+                                <span id="name_error"></span>
                             </li>
 
                             <li>
-                                <textarea name="description" required></textarea>
+                                <textarea name="description" class='clearable' required></textarea>
                                 <label>Description</label>
-								<span id="description_error"></span>
+                                <span id="description_error"></span>
                             </li>
                             <label>Upload Images (5 Max)</label>
-                            <input type="file" name="image" id="category_image" accept="image/*">
+                            <input type="file" name="image" id="category_image" class='clearable' accept="image/*">
                         </ul>
                         <!-- FIXME: center the content of this last li tag -->
-						<button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
+                        <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
                         <button type="submit">Save</button>
                     </form>
                 </div>
@@ -188,23 +189,3 @@ defined("BASEPATH") or exit("No direct script access allowed");
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
