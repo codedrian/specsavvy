@@ -17,42 +17,87 @@ defined("BASEPATH") or exit("No direct script access allowed");
     <link rel="stylesheet" href="../assets/css/vendor/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/css/vendor/bootstrap-select.min.css">
     <link rel="stylesheet" href="../assets/css/custom/admin_global.css">
-    <!--    <script src="../assets/js/global/admin_categories.js"></script> -->
+	<!--DataTable css and js-->
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css">
+	<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+    <!-- toastr cdn -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="../assets/js/global/admin_categories.js"></script>
     <script>
-        $(document).ready(function() {
-            $("#add_category_form").submit(function(e) {
-                e.preventDefault();
-                let formData = new FormData(this);
-                $.ajax({
-                    url: "<?= base_url(''); ?>CategoriesController/process_add_category",
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.response.status === "success") {
-                            alert("Category added successfully");
-                            $("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
-                            /* NOTE: Clear thr input fields after successful submission */
-                            $('.clearable').val('');
-                        } else {
-                            $("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
-                        }
-                        console.log(response);
-                        $.each(response.response.error, function(field, error) {
-                            $("#" + field).html(error);
-                        });
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        console.error("AJAX Error:", textStatus, errorThrown);
-                    }
-                });
+		$(document).ready(function() {
+			// Function to fetch and initialize DataTable
+			function fetchAndInitializeDataTable() {
+				$.get('<?=base_url('CategoriesController/fetch_category')?>', function(response) {
+					console.log(response);
+					$('.category_table').DataTable({
+						ajax: {
+							url: '<?=base_url('CategoriesController/fetch_category')?>',
+							dataSrc: "category"
+						},
+						columns: [
+							{ data: 'category_id' },
+							{ data: 'image_url',
+								render: function(data, type, row) {
+									if (type === 'display' && data) {
+										let image_url = '../' + data;
+										return '<img src="' + image_url + '" alt="' + row.name + '" width="100">';
+									} else {
+										return data;
+									}
+								}
+							},
+							{ data: 'name' },
+							{ data: 'description' },
+							{ data: 'created_at' },
+							{ data: null,
+								render: function(data, type, row) {
+									return '<span><button class="btn btn-primary btn-sm delete-btn edit_product" data-id="' + row.category_id + '">Edit</button><button class="btn btn-danger btn-sm delete-btn delete_product" data-id="' + row.category_id + '">X</button></span>';
+								}
+							}
+						]
+					});
+				}, 'json');
+			}
 
-                return false;
-            });
-        });
-    </script>
+			// Initial DataTable initialization
+			fetchAndInitializeDataTable();
+
+			// Form submission handler
+			$("#add_category_form").submit(function(e) {
+				e.preventDefault();
+				let formData = new FormData(this);
+				$.ajax({
+					url: "<?= base_url(''); ?>CategoriesController/process_add_category",
+					type: "POST",
+					data: formData,
+					processData: false,
+					contentType: false,
+					dataType: "json",
+					success: function(response) {
+						if (response.response.status === "success") {
+							$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
+							$('.clearable').val('');
+							toastr["success"](response.response.message);
+
+							// Reload DataTable after successful form submission
+							$('.category_table').DataTable().ajax.reload();
+						} else {
+							$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
+							$.each(response.response.error, function(field, error) {
+								$("#" + field).html(error).addClass('text-danger');;
+							});
+						}
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.error("AJAX Error:", textStatus, errorThrown);
+					}
+				});
+				return false;
+			});
+		});
+
+	</script>
 
 </head>
 <script>
@@ -114,47 +159,32 @@ defined("BASEPATH") or exit("No direct script access allowed");
             </form> -->
             <!-- NOTE: INSERT category here using AJAX -->
             <div>
-                <table class="products_table">
+                <table class="category_table">
                     <thead>
                         <tr>
-                            <th>
+                           <!-- <th>
                                 <h3>All Categories</h3>
-                            </th>
+                            </th>-->
                             <th>ID #</th>
+							<th></th>
                             <th>Name</th>
                             <th>Description</th>
                             <th>Created on</th>
+							<th></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <span>
-                                    <img src="../assets/images/food.png" alt="#">
-                                    Vegetables
-                                </span>
-                            </td>
-                            <td><span>123</span></td>
-                            <td><span>$ 10</span></td>
-                            <td><span>Vegetable</span></td>
-                            <td><span>123</span></td>
-                            <td>
-                                <span>
-                                    <button class="edit_product">Edit</button>
-                                    <button class="delete_product">X</button>
-                                </span>
-                                <form class="delete_product_form" action="process.php" method="post">
-                                    <p>Are you sure you want to remove this item?</p>
-                                    <button type="button" class="cancel_remove">Cancel</button>
-                                    <button type="submit">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
-                    </tbody>
+					<tbody>
+					<tr>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+					</tbody>
                 </table>
             </div>
         </section>
-        <!-- NOTE: This is modal for Adding a Category -->
+
         <div class="modal fade form_modal" id="add_category_modal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -174,8 +204,9 @@ defined("BASEPATH") or exit("No direct script access allowed");
                                 <label>Description</label>
                                 <span id="description_error"></span>
                             </li>
-                            <label>Upload Images (5 Max)</label>
+                            <label>Upload Image</label>
                             <input type="file" name="image" id="category_image" class='clearable' accept="image/*">
+                            <span id="image_error"></span>
                         </ul>
                         <!-- FIXME: center the content of this last li tag -->
                         <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
