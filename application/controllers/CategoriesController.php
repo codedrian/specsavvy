@@ -15,16 +15,18 @@ class CategoriesController extends CI_Controller
 		if (empty($_FILES['image']['name'])) {
 			$this->form_validation->set_rules('image', 'Image', 'required');
 		}
+
 		if ($this->form_validation->run() == FALSE) {
-			$response = array(
+			$data['response'] = array(
 				"newCsrfToken" => $this->security->get_csrf_hash(),
 				"error" => array(
 					"name_error" => form_error("name"),
 					"description_error" => form_error("description"),
-					'image_error' => form_error('image')
+					'image_error' => form_error('image'),
+					'status' => 'error'
 				)
 			);
-			echo json_encode($response);
+			echo json_encode($data);
 			return;
 			/*NOTE: If user submit a complete form, check the submitted image*/
 		} else {
@@ -42,23 +44,39 @@ class CategoriesController extends CI_Controller
 			$this->upload->initialize($config);
 
 			if (!$this->upload->do_upload("image")) {
-				$response = array(
-					'newCsrfToken' => $this->security->get_csrf_hash(),
-					'image_error' => $this->upload->display_errors()
-				);
-				echo json_encode($response);
-			} else {
-				/*TODO: If image is valid, add it to database*/
-				$upload_data = $this->upload->data();
 				$data['response'] = array(
-					"newCsrfToken" => $this->security->get_csrf_hash(),
-					"status" => "success",
-					'upload_data' => $upload_data,
-					"url" => 'assets/images/category_uploads/' . $upload_data['file_name']
+					'newCsrfToken' => $this->security->get_csrf_hash(),
+					'error' => array(
+						'image_error' => $this->upload->display_errors()
+					)
 				);
 				echo json_encode($data);
+			} else {
+				/*TODO: If image is valid, add it to database*/
+				/*contains mage's data*/
+				$upload_data = $this->upload->data();
+				$image_url = 'assets/images/category_uploads/' . $upload_data['file_name'];
 
+				$category_data = array(
+					'name' => $name,
+					'description' => $description,
+					'image_url' => $image_url
+				);
+				/*Pass the category data to the model to add it in the database*/
+				$data['result'] = $this->CategoryModel->add_user($category_data);
+				if ($data['result'] == TRUE) {
+					$data['response'] = array(
+						"newCsrfToken" => $this->security->get_csrf_hash(),
+						"status" => "success",
+						'message' => 'Category added successfully!',
+					);
+					echo json_encode($data);
+				}
 			}
 		}
     }
+
+	public function fetch_category() {
+		$this->CategoryModel->fetch_category();
+	}
 }
