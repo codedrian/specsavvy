@@ -553,7 +553,8 @@ body .wrapper > section .product_content > div .products_table tbody tr.show_del
   right: 53px;
 }
 body .wrapper > section > div {
-  padding-left: 195px;
+  color: #FFFFFF;
+
 }
 body .wrapper > section > div h3 {
   color: #fff;
