@@ -77,6 +77,7 @@ class CategoriesController extends CI_Controller
     }
 
 	public function fetch_category() {
-		$this->CategoryModel->fetch_category();
+		$data['category'] = $this->CategoryModel->fetch_category();
+		echo json_encode($data);
 	}
 }
