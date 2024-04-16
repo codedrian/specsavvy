@@ -38,7 +38,8 @@ defined("BASEPATH") or exit("No direct script access allowed");
 						columns: [
 							{ data: 'category_id' },
 							{ data: 'image_url',
-								render: function(data, type, row) {
+								render: function(data, type, row)
+								{
 									if (type === 'display' && data) {
 										let image_url = '../' + data;
 										return '<img src="' + image_url + '" alt="' + row.name + '" width="100">';
@@ -47,12 +48,30 @@ defined("BASEPATH") or exit("No direct script access allowed");
 									}
 								}
 							},
-							{ data: 'name' },
-							{ data: 'description' },
-							{ data: 'created_at' },
+							{ data: 'name',
+								render: function (data, type, row)
+								{
+									return '<span>' + data + '</span>';
+								}
+							},
+							{ data: 'description',
+								render: function (data, type, row)
+								{
+									return '<span>' + data + '</span>';
+								}
+							},
+							{ data: 'created_at',
+								render: function (data, type, row)
+								{
+									return '<span>' + data + '</span>';
+								}
+							},
 							{ data: null,
 								render: function(data, type, row) {
-									return '<span><button class="btn btn-primary btn-sm delete-btn edit_product" data-id="' + row.category_id + '">Edit</button><button class="btn btn-danger btn-sm delete-btn delete_product" data-id="' + row.category_id + '">X</button></span>';
+									return '<span>' +
+												'<button class="btn btn-primary btn-sm delete-btn edit_product" data-id="' + row.category_id + '">Edit</button>' +
+												'<button class="btn btn-danger btn-sm delete-btn delete_product" data-id="' + row.category_id + '">X</button>' +
+											'</span>';
 								}
 							}
 						]
@@ -173,8 +192,9 @@ defined("BASEPATH") or exit("No direct script access allowed");
 							<th></th>
                         </tr>
                     </thead>
-					<tbody>
+					<tbody class="no-padding-table">
 					<tr>
+						<td></td>
 						<td></td>
 						<td></td>
 						<td></td>
