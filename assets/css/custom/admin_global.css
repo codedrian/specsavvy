@@ -46,6 +46,14 @@
   font-family: proxima_nova_thin;
   src: url("../../fonts/Proxima Nova Thin.otf");
 }
+/*DataTable css*/
+/*Override the TableData td padding*/
+table.dataTable>tbody.no-padding-table>tr>th,
+table.dataTable>tbody.no-padding-table>tr>td {
+	padding: 0;
+
+}
+
 body {
   background-color: #212332;
 }
