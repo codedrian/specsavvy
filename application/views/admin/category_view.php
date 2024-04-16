@@ -30,22 +30,28 @@ defined("BASEPATH") or exit("No direct script access allowed");
 			function fetchAndInitializeDataTable() {
 				$.get('<?=base_url('CategoriesController/fetch_category')?>', function(response) {
 					console.log(response);
-					$('.category_table').DataTable({
+					$('.products_table').DataTable({
 						ajax: {
 							url: '<?=base_url('CategoriesController/fetch_category')?>',
 							dataSrc: "category"
 						},
 						columns: [
-							{ data: 'category_id' },
 							{ data: 'image_url',
 								render: function(data, type, row)
 								{
 									if (type === 'display' && data) {
 										let image_url = '../' + data;
-										return '<img src="' + image_url + '" alt="' + row.name + '" width="100">';
+										return '<span>' +
+													'<img src="' + image_url + '" alt="' + row.name + '" width="100">' +
+												'</span>';
 									} else {
 										return data;
 									}
+								}
+							},
+							{ data: 'category_id',
+								render: function(data, type, row) {
+									return '<span>' + data + '</span>';
 								}
 							},
 							{ data: 'name',
@@ -100,7 +106,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
 							toastr["success"](response.response.message);
 
 							// Reload DataTable after successful form submission
-							$('.category_table').DataTable().ajax.reload();
+							$('.products_table').DataTable().ajax.reload();
 						} else {
 							$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
 							$.each(response.response.error, function(field, error) {
@@ -178,7 +184,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
             </form> -->
             <!-- NOTE: INSERT category here using AJAX -->
             <div>
-                <table class="category_table">
+                <table class="products_table">
                     <thead>
                         <tr>
                            <!-- <th>
