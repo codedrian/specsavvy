@@ -48,10 +48,9 @@
 }
 /*DataTable css*/
 /*Override the TableData td padding*/
-table.dataTable>tbody.no-padding-table>tr>th,
-table.dataTable>tbody.no-padding-table>tr>td {
-	padding: 0;
 
+div.dt-container .dt-input {
+	background-color: #212332 !important;
 }
 
 body {

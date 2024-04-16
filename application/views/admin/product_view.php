@@ -16,8 +16,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
     <script src="../assets/js/vendor/bootstrap-select.min.js"></script>
     <link rel="stylesheet" href="../assets/css/vendor/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/css/vendor/bootstrap-select.min.css">
-
-    <link rel="stylesheet" href="../assets/css/custom/admin_global.css">
+    <link rel="stylesheet" href="../assets/css/custom/admin_global_products.css">
     <script src="../assets/js/global/admin_products.js"></script>
 </head>
 <script>
@@ -210,6 +209,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
                                 <label>Description</label>
                             </li>
                             <li>
+								<!--TODO: Fetch category-->
                                 <label>Category</label>
                                 <select class="selectpicker">
                                     <option>Vegetables</option>
