@@ -173,7 +173,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
             <div class="modal-dialog">
                 <div class="modal-content">
                     <button data-dismiss="modal" aria-label="Close" class="close_modal"></button>
-                    <form id='add_product_form'  method='post'<!-- enctype="multipart/form-data"-->>
+                    <form id='add_product_form'  method='post' enctype="multipart/form-data">
 						<input type='hidden' name='<?= $this->security->get_csrf_token_name() ?>' value='<?= $this->security->get_csrf_hash() ?>'>
                         <h2>Add a Product</h2>
                         <ul>
@@ -200,7 +200,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
                             </li>
                             <div>
 								<label>Upload Images (5 Max)</label>
-								<input type="file" class="d-block" name="image" accept="image/*">
+								<input type="file" class="d-block" name="uploadedImages[]" multiple accept="image/*" max="5">
 							</div>
                         </ul>
                         <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
