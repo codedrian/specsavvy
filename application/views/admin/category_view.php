@@ -72,14 +72,18 @@ defined("BASEPATH") or exit("No direct script access allowed");
 									return '<span>' + data + '</span>';
 								}
 							},
+							/*{ data: null,
+								render: function(data, type, row) {
+									return '<button class="btn btn-primary btn-sm delete-btn edit_product" data-id="' + row.category_id + '">Edit</button>';
+								}
+							},
 							{ data: null,
 								render: function(data, type, row) {
 									return '<span>' +
-												'<button class="btn btn-primary btn-sm delete-btn edit_product" data-id="' + row.category_id + '">Edit</button>' +
-												'<button class="btn btn-danger btn-sm delete-btn delete_product" data-id="' + row.category_id + '">X</button>' +
-											'</span>';
+										'<button class="btn btn-danger btn-sm delete-btn delete_product" data-id="' + row.category_id + '">X</button>' +
+										'</span>';
 								}
-							}
+							}*/
 						]
 					});
 				}, 'json');
@@ -110,7 +114,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
 						} else {
 							$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
 							$.each(response.response.error, function(field, error) {
-								$("#" + field).html(error).addClass('text-danger');;
+								$("#" + field).html(error).addClass('text-danger');
 							});
 						}
 					},
@@ -190,12 +194,12 @@ defined("BASEPATH") or exit("No direct script access allowed");
                            <!-- <th>
                                 <h3>All Categories</h3>
                             </th>-->
+							<th>Image</th>
                             <th>ID #</th>
-							<th></th>
                             <th>Name</th>
                             <th>Description</th>
                             <th>Created on</th>
-							<th></th>
+
                         </tr>
                     </thead>
 					<tbody class="no-padding-table">
