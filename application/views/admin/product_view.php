@@ -23,24 +23,25 @@ defined("BASEPATH") or exit("No direct script access allowed");
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<script>
 		$(document).ready(function() {
-			fetchCategory();
-
 			/*This handles the fetching of category in form's category dropdown*/
 			function fetchCategory() {
 				$.get("<?=base_url('CategoriesController/fetch_category')?>", function(response) {
+					console.log(response);
 					response.category.forEach(function(category) {
 						let name = category.name;
 						let id = category.category_id;
-						$('.selectpicker').append(`<option value='${id}'>${name}</option>`);
+						$('#category_picker').append(`<option value='${id}'>${name}</option>`);
 					});
 				}, 'json')
 			}
+			fetchCategory();
+
 			/*This handles the form submission using ajax*/
-			$('.add_product_form').submit(function(e) {
+			$('#add_product_form').submit(function(e) {
 				e.preventDefault();
 				let formData = new FormData(this);
 				$.ajax({
-					url: "<?=base_url()?>ProductsController/process_add_product",
+					url: "<?=base_url('')?>ProductsController/process_add_product",
 					type: 'POST',
 					data: formData,
 					processData: false,
@@ -50,7 +51,11 @@ defined("BASEPATH") or exit("No direct script access allowed");
 						/*Set the new CSRF token to the hidden input*/
 						console.log(response);
 						$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
-						toastr["success"](response.response.message);
+						if (response.response.status === 'success') {
+							toastr["success"](response.response.message);
+						} else {
+							toastr['error'](response.response.message);
+						}
 
 					},
 					error: function(jgXHR, textStatus, errorThrown) {
@@ -168,12 +173,12 @@ defined("BASEPATH") or exit("No direct script access allowed");
             <div class="modal-dialog">
                 <div class="modal-content">
                     <button data-dismiss="modal" aria-label="Close" class="close_modal"></button>
-                    <form class="add_product_form" action="process.php" method="post">
+                    <form id='add_product_form'  method='post'<!-- enctype="multipart/form-data"-->>
 						<input type='hidden' name='<?= $this->security->get_csrf_token_name() ?>' value='<?= $this->security->get_csrf_hash() ?>'>
                         <h2>Add a Product</h2>
                         <ul>
                             <li>
-                                <input type="text" name="prouct_name" required>
+                                <input type="text" name="product_name" required>
                                 <label>Product Name</label>
                             </li>
                             <li>
@@ -181,9 +186,8 @@ defined("BASEPATH") or exit("No direct script access allowed");
                                 <label>Description</label>
                             </li>
                             <li>
-								<!--TODO: Fetch category-->
                                 <label>Category</label>
-                                <select class="selectpicker" name='category'>
+                                <select id='category_picker' class="selectpicker" name='category'>
                                 </select>
                             </li>
                             <li>
@@ -194,17 +198,14 @@ defined("BASEPATH") or exit("No direct script access allowed");
                                 <input type="number" name="inventory" value="1" required>
                                 <label>Inventory</label>
                             </li>
-                            <li>
-                                <label>Upload Images (5 Max)</label>
-                                <ul>
-                                    <li><button type="button" class="upload_image"></button></li>
-                                </ul>
-                                <input type="file" name="image" accept="image/*">
-                            </li>
+                            <div>
+								<label>Upload Images (5 Max)</label>
+								<input type="file" class="d-block" name="image" accept="image/*">
+							</div>
                         </ul>
                         <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
                         <button type="submit">Save</button>
-                    </form>
+                    </form>""
                 </div>
             </div>
         </div>
