@@ -46,6 +46,7 @@ class ProductsController extends CI_Controller
 		/*contains each image data*/
 		$image_data = [];
 		$image_error = [];
+		/*Check if each image*/
 		for ($i=0; $i <$image_count; $i++ ) {
 			$_FILES['uploadedImage']['name'] = $_FILES['uploadedImages']['name'][$i];
 			$_FILES['uploadedImage']['type'] = $_FILES['uploadedImages']['type'][$i];
@@ -66,7 +67,8 @@ class ProductsController extends CI_Controller
 				$image_error[] = $this->upload->display_errors();
 			} else {
 				/*If image is valid*/
-				$image_data[] = $this->upload->data();
+				$image_url = $this->upload->data('file_name');
+				$image_data[] =  'assets/images/' . $upload_path . $image_url;
 			}
 		}
 
@@ -82,7 +84,9 @@ class ProductsController extends CI_Controller
 			echo json_encode($data);
 			return;
 		} else {
-			/*TODO: Proceed to adding in database*/
+			/*TODO: If image is uploaded successfully, add the product id to the IMAGE table to enable the connection between the two*/
+			$data['result'] = $this->ProductModel->add_product($product_data, $image_data);
+
 			$data['response'] = array(
 				'newCsrfToken' => $this->security->get_csrf_hash(),
 				'status' => 'success',
