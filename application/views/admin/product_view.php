@@ -21,22 +21,48 @@ defined("BASEPATH") or exit("No direct script access allowed");
 	<!-- toastr cdn -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<!--DataTable css and js-->
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css">
+	<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
 	<script>
 		$(document).ready(function() {
-			/*This handles the fetching of category in form's category dropdown*/
-			function fetchCategory() {
-				$.get("<?=base_url('CategoriesController/fetch_category')?>", function(response) {
-					console.log(response);
-					response.category.forEach(function(category) {
-						let name = category.name;
-						let id = category.category_id;
-						$('#category_picker').append(`<option value='${id}'>${name}</option>`);
+			/*NOTE: handles the fetching of category in form's category dropdown*/
+					$.ajax({
+						url: "<?=base_url('')?>CategoriesController/fetch_category",
+						type: 'GET',
+						dataType: 'json',
+						success: function(response) {
+							response.category.forEach(function(category) {
+								let name = category.name;
+								let id = category.category_id;
+								$('#category_picker').append(`<option value='${id}'>${name}</option>`);
+							})
+						},
+						error: function(jgXHR, textStatus, errorThrown) {
+							console.error('AJAX Error:', textStatus, errorThrown);
+						}
 					});
-				}, 'json')
+			/*TODO: Fix the products table*/
+			function fetchProduct() {
+				$.get("<?=base_url('ProductsController/fetch_product');?>", function(response) {
+					console.log(response);
+					$('.products_table').DataTable({
+						ajax: {
+							url: "<?=base_url('ProductsController/fetch_product');?>",
+							dataSrc: 'response'
+						},
+						columns: [
+							{ data: 'product_id'},
+							{ data: 'category_name'},
+							{ data: 'price'},
+							{ data: 'stock_level'}
+						]
+					});
+				}, 'json');
 			}
-			fetchCategory();
+			fetchProduct();
 
-			/*This handles the form submission using ajax*/
+			/*NOTE:This handles the form submission using ajax*/
 			$('#add_product_form').submit(function(e) {
 				e.preventDefault();
 				let formData = new FormData(this);
@@ -52,11 +78,11 @@ defined("BASEPATH") or exit("No direct script access allowed");
 						console.log(response);
 						$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
 						if (response.response.status === 'success') {
+							$('.clearable').val('');
 							toastr["success"](response.response.message);
 						} else {
 							toastr['error'](response.response.message);
 						}
-
 					},
 					error: function(jgXHR, textStatus, errorThrown) {
 						console.error('AJAX Error:', textStatus, errorThrown);
@@ -128,31 +154,23 @@ defined("BASEPATH") or exit("No direct script access allowed");
                 <table class="products_table">
                     <thead>
                         <tr>
-                            <th>
+                           <!-- <th>
                                 <h3>All Products</h3>
-                            </th>
+                            </th>-->
                             <th>ID #</th>
                             <th>Price</th>
-                            <th>Caregory</th>
+                            <th>Category</th>
                             <th>Inventory</th>
-                            <th>Sold</th>
-                            <th></th>
+                            <!--<th>TODO: Insert the buttons here</th>-->
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>
-                                <span>
-                                    <img src="../assets/images/food.png" alt="#">
-                                    Vegetables
-                                </span>
-                            </td>
-                            <td><span>123</span></td>
-                            <td><span>$ 10</span></td>
-                            <td><span>Vegetable</span></td>
-                            <td><span>123</span></td>
-                            <td><span>1000</span></td>
-                            <td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <!--<td>
                                 <span>
                                     <button class="edit_product">Edit</button>
                                     <button class="delete_product">X</button>
@@ -162,7 +180,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
                                     <button type="button" class="cancel_remove">Cancel</button>
                                     <button type="submit">Remove</button>
                                 </form>
-                            </td>
+                            </td>-->
                         </tr>
                     </tbody>
                 </table>
@@ -178,29 +196,30 @@ defined("BASEPATH") or exit("No direct script access allowed");
                         <h2>Add a Product</h2>
                         <ul>
                             <li>
-                                <input type="text" name="product_name" required>
+                                <input type="text" name="product_name" class="clearable" required>
                                 <label>Product Name</label>
                             </li>
                             <li>
-                                <textarea name="description" required></textarea>
+                                <textarea name="description" class="clearable" required></textarea>
                                 <label>Description</label>
                             </li>
                             <li>
                                 <label>Category</label>
-                                <select id='category_picker' class="selectpicker" name='category'>
+                                <select id='category_picker' class="selectpicker clearable" name='category'>
+									<option disabled selected >Select a category</option>
                                 </select>
                             </li>
                             <li>
-                                <input type="number" name="price" value="1" required>
+                                <input type="number" name="price" placeholder="1" class="clearable" required>
                                 <label>Price</label>
                             </li>
                             <li>
-                                <input type="number" name="inventory" value="1" required>
+                                <input type="number" name="inventory" placeholder="1" class="clearable" required>
                                 <label>Inventory</label>
                             </li>
                             <div>
 								<label>Upload Images (5 Max)</label>
-								<input type="file" class="d-block" name="uploadedImages[]" multiple accept="image/*" max="5">
+								<input type="file" class="d-block clearable" name="uploadedImages[]" multiple accept="image/*" max="5" >
 							</div>
                         </ul>
                         <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
