@@ -41,7 +41,7 @@ defined("BASEPATH") or exit("No direct script access allowed")
     <?php $this->load->view("partials/flash_messages"); ?>
     <!-- <?= var_dump($this->session->all_userdata()); ?> -->
     <div class="wrapper">
-        <a href="/dashboard"><img src="../assets/images/organic_shop_logo_large.svg" alt="Organic Shop"></a>
+        <!--TODO: Insert logo here-->
         <form action="<?= base_url("AdminsController/process_login_form") ?>" method="post" class="login_form">
             <!-- Note: This generated a CSRF token -->
             <input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
