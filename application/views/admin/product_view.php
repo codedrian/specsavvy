@@ -52,10 +52,48 @@ defined("BASEPATH") or exit("No direct script access allowed");
 							dataSrc: 'response'
 						},
 						columns: [
-							{ data: 'product_id'},
-							{ data: 'category_name'},
-							{ data: 'price'},
-							{ data: 'stock_level'}
+							/*todo: remove the div tag that contains the product name inside span*/
+							{ data: 'image_url',
+								render: function(data, type, row)
+								{
+									if (type === 'display' && data) {
+										let image_url = '../' + data;
+										return '<span>' +
+													'<img src="' + image_url + '" alt="' + row.name + '" width="100">' +
+													 '<div class="' + 'product_name' + '">' + row.name + '</div>' +
+											   '</span>'
+									} else {
+										return data;
+									}
+								}
+							},
+							{ data: 'product_id',
+								render: function(data, row) {
+									return '<span>' + data + '</span>';
+								}
+							},
+							{ data: 'name', visible: false },
+							{ data: 'category_name',
+								render: function(data, row) {
+									return '<span>' + data + '</span>';
+								}
+							},
+							{ data: 'price',
+								render: function(data, row) {
+									return '<span>' + data + '</span>';
+								}
+							},
+							{ data: 'stock_level',
+								render: function(data, row) {
+									return '<span>' + data + '</span>';
+								}
+							},
+							{ data: null,
+								render: function(data, row) {
+									return '<button class="btn btn-primary btn-sm delete-btn edit_product" data-id="' + row.category_id + '">Edit</button>' +
+											'<button class="btn btn-danger btn-sm delete-btn delete_product" data-id="' + row.category_id + '">X</button>';
+								}
+							}
 						]
 					});
 				}, 'json');
@@ -150,7 +188,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
                 </ul>
             </form>
             <!-- NOTE: INSERT products here using AJAX -->
-            <div>
+            <div class="data_table">
                 <table class="products_table">
                     <thead>
                         <tr>
@@ -158,18 +196,23 @@ defined("BASEPATH") or exit("No direct script access allowed");
                                 <h3>All Products</h3>
                             </th>-->
                             <th>ID #</th>
+							<th></th>
+							<th>Name</th>
                             <th>Price</th>
                             <th>Category</th>
                             <th>Inventory</th>
-                            <!--<th>TODO: Insert the buttons here</th>-->
+							<th></th><!--<th>TODO: Insert the buttons here</th>-->
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
+							<td></td>
+							<td></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
+							<td></td>
                             <!--<td>
                                 <span>
                                     <button class="edit_product">Edit</button>
