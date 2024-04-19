@@ -76,7 +76,7 @@ class ProductsController extends CI_Controller
 					} else {
 						/*If image is valid*/
 						$image_file_name = $this->upload->data('file_name');
-						$image_url[] =  'assets/images/' . $upload_path . $image_file_name;
+						$image_url[] = $upload_path . $image_file_name;
 					}
 				}
 				/*Comment: After validation, loop in the image url array and add it individually to the database*/
