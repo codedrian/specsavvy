@@ -2,9 +2,9 @@
 
 class ProductModel extends CI_Model {
 
-	/*TODO: Add the datas to the PRODUCT table and add the products product id and image urls to the image table*/
-	public function add_product($product_data, $image_data) {
-		$sql = 'INSERT INTO `products`(`name`, `description`, `price`, `category_id`, `stock_level`) VALUES(?,?,?,?,?)';
+	public function add_product($product_data)
+	{
+		$sql = 'INSERT INTO `product`(`name`, `description`, `price`, `category_id`, `stock_level`) VALUES(?,?,?,?,?)';
 		$this->db->query($sql, array($product_data['product_name'], $product_data['description'], $product_data['price'], $product_data['category'], $product_data['inventory']));
 		/*Check if it is successfully inserted*/
 		if ($this->db->affected_rows() > 0) {
@@ -18,5 +18,49 @@ class ProductModel extends CI_Model {
 			);
 		}
 
+	}
+
+	/*TODO: Add the products product id and image urls to the image table*/
+	public function add_image($product_id, $url)
+	{
+		$sql = 'INSERT INTO `product_image`(`product_id`, `image_url`) VALUES(?, ?)';
+		$this->db->query($sql, array($product_id, $url));
+
+		if ($this->db->affected_rows() > 0) {
+			return array(
+				'is_upload-successful' => TRUE
+			);
+		} else {
+			return array(
+				'is_upload-successful' => FALSE
+			);
+		}
+	}
+
+	public function fetch_product() {
+		$query = $this->db->query('SELECT
+											p.product_id,
+											p.name,
+											p.price,
+											p.description,
+											p.stock_level,
+											c.name AS category_name,
+											(SELECT
+												i.image_url
+											FROM
+												product_image i
+											WHERE
+												i.product_id = p.product_id
+											LIMIT 1) AS image_url
+										FROM
+											product p
+										INNER JOIN category c ON
+											p.category_id = c.category_id;');
+		/*TODO:If theres result, return the query result*/
+		if($query) {
+			return $query->result_array();
+		} else {
+			return null;
+		}
 	}
 }
