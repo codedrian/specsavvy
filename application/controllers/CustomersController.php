@@ -105,4 +105,8 @@ class CustomersController extends CI_Controller
 			}
 		}
 	}
+
+	public function view_dashboard() {
+		$this->load->view('customer/dashboard_view');
+	}
 }
