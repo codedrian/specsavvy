@@ -39,7 +39,6 @@ defined("BASEPATH") or exit("No direct script access allowed")
 
 <body>
     <?php $this->load->view("partials/flash_messages"); ?>
-    <!-- <?= var_dump($this->session->all_userdata()); ?> -->
     <div class="wrapper">
         <!--TODO: Insert logo here-->
         <form action="<?= base_url("AdminsController/process_login_form") ?>" method="post" class="login_form">
