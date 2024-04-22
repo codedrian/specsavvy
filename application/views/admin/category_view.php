@@ -60,36 +60,25 @@ defined("BASEPATH") or exit("No direct script access allowed");
 									return '<span>' + data + '</span>';
 								}
 							},
-							{ data: 'description',
-								render: function (data, type, row)
-								{
-									return '<span>' + data + '</span>';
-								}
-							},
 							{ data: 'created_at',
 								render: function (data, type, row)
 								{
 									return '<span>' + data + '</span>';
 								}
 							},
-							/*{ data: null,
-								render: function(data, type, row) {
-									return '<button class="btn btn-primary btn-sm delete-btn edit_product" data-id="' + row.category_id + '">Edit</button>';
-								}
-							},
 							{ data: null,
 								render: function(data, type, row) {
 									return '<span>' +
-										'<button class="btn btn-danger btn-sm delete-btn delete_product" data-id="' + row.category_id + '">X</button>' +
-										'</span>';
+												'<button class="btn btn-primary btn-sm delete-btn edit_product" data-id="' + row.category_id + '">Edit</button>' +
+												'<button class="btn btn-danger btn-sm delete-btn delete_product" data-id="' + row.category_id + '">X</button>' +
+									       '</span>';
 								}
-							}*/
+							},
 						]
 					});
+					$('.dt-search').addClass('search_form');
 				}, 'json');
 			}
-
-			// Initial DataTable initialization
 			fetchAndInitializeDataTable();
 
 			// Form submission handler
@@ -164,10 +153,11 @@ defined("BASEPATH") or exit("No direct script access allowed");
             </ul>
         </aside>
         <section>
-            <form action="process.php" method="post" class="search_form">
+			<!--NOTE: original searc form-->
+      		 <!--<form action="process.php" method="post" class="search_form">
                 <input type="text" name="search" placeholder="Search Category">
-            </form>
-            <button class="add_category" data-toggle="modal" data-target="#add_category_modal">Add Category</button>
+            </form>-->
+            <button class="add_product" data-toggle="modal" data-target="#add_category_modal">Add Category</button>
             <!-- NOTE: This is the sidebar button -->
             <!--  <form action="process.php" method="post" class="status_form">
                 <h3>Categories</h3>
@@ -197,8 +187,8 @@ defined("BASEPATH") or exit("No direct script access allowed");
 							<th>Image</th>
                             <th>ID #</th>
                             <th>Name</th>
-                            <th>Description</th>
                             <th>Created on</th>
+							<th></th>
 
                         </tr>
                     </thead>
