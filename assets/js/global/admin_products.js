@@ -15,15 +15,15 @@ $(document).ready(function() {
     });
 
     /* To trigger input file */
-    $("body").on("click", ".upload_image", function() {
+   /* $("body").on("click", ".upload_image", function() {
         $(".image_input").trigger("click");
-    });
+    });*/
 
     /* To trigger image upload */
-    $("body").on("change", ".image_input", function() {
+   /* $("body").on("change", ".image_input", function() {
         $('.form_data_action').val("upload_image");
         $(".add_product_form").trigger("submit");
-    });
+    });*/
 
     /* To delete an image */
     $("body").on("click", ".delete_image", function() {
