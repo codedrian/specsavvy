@@ -59,9 +59,8 @@ defined("BASEPATH") or exit("No direct script access allowed");
 									if (type === 'display' && data) {
 										let image_url = '../' + data;
 										return '<span>' +
-													'<img src="' + image_url + '" alt="' + row.name + '" width="100">' +
-													 '<div class="' + 'product_name' + '">' + row.name + '</div>' +
-											   '</span>'
+													'<img src="' + image_url + '" alt="' + row.name + '" width="100">' + '<p>' + row.name + '</p>' +
+											   '</span>';
 									} else {
 										return data;
 									}
@@ -96,6 +95,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
 							}
 						]
 					});
+					$('.dt-search').addClass('search_form');
 				}, 'json');
 			}
 			fetchProduct();
@@ -164,9 +164,9 @@ defined("BASEPATH") or exit("No direct script access allowed");
             </ul>
         </aside>
         <section>
-            <form action="process.php" method="post" class="search_form">
+            <!--<form action="process.php" method="post" class="search_form">
                 <input type="text" name="search" placeholder="Search Products">
-            </form>
+            </form>-->
             <!-- NOTE: This is the button modal categories -->
             <button class="add_product" data-toggle="modal" data-target="#add_product_modal">Add Product</button>
             <!-- NOTE: This is the sidebar button -->
@@ -195,11 +195,11 @@ defined("BASEPATH") or exit("No direct script access allowed");
                            <!-- <th>
                                 <h3>All Products</h3>
                             </th>-->
-                            <th>ID #</th>
 							<th></th>
+                            <th>ID #</th>
 							<th>Name</th>
-                            <th>Price</th>
                             <th>Category</th>
+                            <th>Price</th>
                             <th>Inventory</th>
 							<th></th><!--<th>TODO: Insert the buttons here</th>-->
                         </tr>
