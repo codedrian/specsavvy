@@ -45,7 +45,6 @@ class AdminModel extends CI_Model {
         } else {
             return FALSE;
         }
-
     }
     public function process_login_form($loginInput) {
         $email = $loginInput["email_address"];
