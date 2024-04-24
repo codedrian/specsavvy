@@ -20,7 +20,6 @@ class ProductModel extends CI_Model {
 
 	}
 
-	/*TODO: Add the products product id and image urls to the image table*/
 	public function add_image($product_id, $url)
 	{
 		$sql = 'INSERT INTO `product_image`(`product_id`, `image_url`) VALUES(?, ?)';
@@ -37,7 +36,7 @@ class ProductModel extends CI_Model {
 		}
 	}
 
-	public function fetch_product() {
+	public function fetch_all_product() {
 		$query = $this->db->query('SELECT
 											p.product_id,
 											p.name,
