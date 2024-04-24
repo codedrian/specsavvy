@@ -122,10 +122,7 @@ body .wrapper header h1::before {
   vertical-align: top;
   width: 25px;
 }
-body .wrapper header div {
-  display: inline-block;
-  vertical-align: top;
-}
+
 body .wrapper header div a {
   border-radius: 10px;
   border: none;
@@ -313,6 +310,15 @@ body .form_modal .modal-dialog .modal-content form ul li input {
   padding-left: 13px;
   transition: 0.1s;
   width: 100%;
+}
+body .wrapper header div button.profile img {
+	border-radius: 50px;
+}
+body .wrapper header div button {
+	border: none;
+}
+body .wrapper header div button.profile {
+	background-color: #FFFFFF;
 }
 body .form_modal .modal-dialog .modal-content form ul li input:focus,
 body .form_modal .modal-dialog .modal-content form ul li input:valid {
@@ -507,3 +513,4 @@ body .popover_overlay {
 .show_popover_overlay {
   overflow: hidden;
 }
+
