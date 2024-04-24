@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed.');
 
-class CustomerModel extends CI_Model
+class AccountModel extends CI_Model
 {
 	public function create_customer($signupInput) {
 		$hashed_password = password_hash($signupInput['password'], PASSWORD_DEFAULT);
