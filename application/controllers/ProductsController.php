@@ -95,8 +95,8 @@ class ProductsController extends CI_Controller
 		}
 	}
 
-	public function fetch_product() {
-		$data['response'] = $this->ProductModel->fetch_product();
+	public function fetch_all_product() {
+		$data['products'] = $this->ProductModel->fetch_all_product();
 		echo json_encode($data);
 	}
 }
