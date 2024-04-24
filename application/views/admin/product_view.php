@@ -44,11 +44,11 @@ defined("BASEPATH") or exit("No direct script access allowed");
 					});
 			/*TODO: Fix the products table*/
 			function fetchProduct() {
-				$.get("<?=base_url('ProductsController/fetch_product');?>", function(response) {
+				$.get("<?=base_url('ProductsController/fetch_all_product');?>", function(response) {
 					console.log(response);
 					$('.products_table').DataTable({
 						ajax: {
-							url: "<?=base_url('ProductsController/fetch_product');?>",
+							url: "<?=base_url('ProductsController/fetch_all_product');?>",
 							dataSrc: 'response'
 						},
 						columns: [
