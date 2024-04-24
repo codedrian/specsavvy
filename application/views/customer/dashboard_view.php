@@ -21,6 +21,38 @@
 
 <script>
 	$(document).ready(function() {
+		/*TODO: Fetch all products*/
+		$.ajax({
+			url: "<?=base_url('')?>ProductsController/fetch_all_product",
+			type: 'GET',
+			dataType: 'json',
+			success: function(response) {
+				let product_count = response.products.length;
+				$('#product_count').append(`All Product (${product_count})`);
+				$.each(response.products, function(index, product) {
+					let productCard = `<li>
+										<!--TODO: Insert here the id so that we can retreive  the product when clicked-->
+											<a href="product_view.html">
+												<img src="../assets/images/food.png" alt="#">
+												<h3>${product.name}</h3>
+												<ul class="rating">
+													<li></li>
+													<li></li>
+													<li></li>
+													<li></li>
+													<li></li>
+												</ul>
+												<span>36 Rating</span>
+												<span class="price">$ 10</span>
+									   		</a>
+									  </li>`;
+				$('.product_list').append(productCard);
+				});
+			},
+			error: function(jqXHR, textStatus, errorThrown ) {
+				console.log('AJAX Error:', textStatus, errorThrown);
+			}
+		});
 	})
 </script>
 <body>
@@ -38,13 +70,13 @@
 						<span class="sr-only">Toggle Dropdown</span>
 					</button>
 					<div class="dropdown-menu">
-						<a class="dropdown-item" href="<?= base_url("CustomersController/process_logout") ?>">Logout</a>
+						<a class="dropdown-item" href="<?= base_url("AccountsController/process_logout") ?>">Logout</a>
 						<a class="dropdown-item" href="<?php /*= base_url("") */?>">Settings</a>
 					</div>
 				</div>
 			<?php else: ?>
 				<a class="signup_btn" href="signup.html">Signup</a>
-				<a class="login_btn" href="<?=base_url('CustomersController/view_login_form');?>">Login</a>
+				<a class="login_btn" href="<?=base_url('AccountsController/view_login_form');?>">Login</a>
 			<?php endif; ?>
 		</div>
 	</header>
@@ -63,11 +95,6 @@
 		<form action="process.php" method="post" class="categories_form">
 			<h3>Categories</h3>
 			<ul>
-				<li>
-					<button type="submit" class="active">
-						<span>36</span><img src="../assets/images/apple.png" alt="#"><h4>All Products</h4>
-					</button>
-				</li>
 				<li>
 					<button type="submit">
 						<span>36</span><img src="../assets/images/apple.png" alt="#"><h4>Vegetables</h4>
@@ -96,25 +123,8 @@
 			</ul>
 		</form>
 		<div>
-			<!--TODO: Fetch the products-->
-			<h3>All Products(46)</h3>
-			<ul>
-				<li>
-					<a href="product_view.html">
-						<img src="../assets/images/food.png" alt="#">
-						<h3>Vegetables</h3>
-						<ul class="rating">
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
-						<span>36 Rating</span>
-						<span class="price">$ 10</span>
-					</a>
-				</li>
-
+			<h3 id="product_count"></h3>
+			<ul class="product_list">
 			</ul>
 		</div>
 	</section>
