@@ -88,12 +88,12 @@ class CustomersController extends CI_Controller
 
 			if ($isLoggedIn['result'] == TRUE) {
 				$data['response'] = array(
-					'message' => 'YESSSSSSSSSSSSS',
 					'newCsrfToken' => $this->security->get_csrf_hash(),
-					'status' => 'success',
-					'customer_id' => $isLoggedIn['id'],
-					'first_name' => $isLoggedIn['first_name']
+					'status' => 'success'
 				);
+				$this->session->set_userdata('customer_id', $isLoggedIn['id']);
+				$this->session->set_userdata('first_name', $isLoggedIn['first_name']);
+				$this->session->set_userdata('is_log_in', TRUE);
 				echo json_encode($data);
 			} else {
 				$data['response'] = array(
@@ -105,8 +105,11 @@ class CustomersController extends CI_Controller
 			}
 		}
 	}
-
 	public function view_dashboard() {
-		$this->load->view('customer/dashboard_view');
+			$this->load->view('customer/dashboard_view');
+	}
+	public function process_logout() {
+		$this->session->sess_destroy();
+		redirect("CustomersController/view_login_form");
 	}
 }
