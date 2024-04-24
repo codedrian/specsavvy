@@ -31,7 +31,7 @@ defined("BASEPATH") or exit("No direct script access allowed")
 			e.preventDefault();
 			let formData = new FormData(this);
 			$.ajax({
-				url: "<?= base_url("") ?>CustomersController/process_login_form",
+				url: "<?= base_url("") ?>AccountsController/process_login_form",
 				type: 'POST',
 				data: formData,
 				processData: false,
@@ -42,7 +42,7 @@ defined("BASEPATH") or exit("No direct script access allowed")
 					$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
 					if (response.response.status === 'success') {
 						/*PROCEED TO DASHBOARD*/
-						window.location.href = '<?= base_url('')?>CustomersController/view_dashboard'
+						window.location.href = '<?= base_url('')?>AccountsController/view_dashboard'
 					}
 					else {
 						toastr['error'](response.response.message);

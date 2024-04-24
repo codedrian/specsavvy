@@ -30,7 +30,7 @@
 
 			let formData = new FormData(this);
 			$.ajax({
-				url: '<?=base_url('')?>CustomersController/process_signup_form',
+				url: '<?=base_url('')?>AccountsController/process_signup_form',
 				type: 'POST',
 				data: formData,
 				dataType: 'json',
@@ -62,11 +62,11 @@
 <?php $this->load->view("partials/flash_messages.php"); ?>
 <div class="wrapper">
 	<!--<a href="/dashboard"><img src="../assets/images/organic_shop_logo_large.svg" alt="Organic Shop"></a>-->
-	<form action="<?= base_url("CustomersController/process_signup_form") ?>" method="post">
+	<form action="<?= base_url("AccountsController/process_signup_form") ?>" method="post">
 		<input type="hidden" name="<?= $this->security->get_csrf_token_name(); ?>" value="<?= $this->security->get_csrf_hash(); ?>">
 
 		<h2>Signup to order.</h2>
-		<a href="<?= base_url("CustomersController/view_login_form");?>">Already a member? Login here.</a>
+		<a href="<?= base_url("AccountsController/view_login_form");?>">Already a member? Login here.</a>
 		<ul>
 			<li>
 				<input type="text" name="first_name" value="<?= set_value('first_name') ?>" required>
