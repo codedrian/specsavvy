@@ -15,7 +15,6 @@
 	<script src="../assets/js/vendor/bootstrap-select.min.js"></script>
 	<link rel="stylesheet" href="../assets/css/vendor/bootstrap.min.css">
 	<link rel="stylesheet" href="../assets/css/vendor/bootstrap-select.min.css">
-
 	<link rel="stylesheet" href="../assets/css/custom/global.css">
 	<link rel="stylesheet" href="../assets/css/custom/product_dashboard.css">
 </head>
@@ -26,19 +25,35 @@
 </script>
 <body>
 <div class="wrapper">
+		<!--TODO: use include so 1 header in all page-->
 	<header>
 		<h1>Let’s order fresh items for you.</h1>
-		<!--<div>
-			<a class="signup_btn" href="signup.html">Signup</a>
-			<a class="login_btn" href="login.html">Login</a>
-		</div>-->
+		<div>
+			<?php if ($this->session->userdata('is_log_in')) : ?>
+				<div class="btn-group">
+					<button class="profile mr-1">
+						<img src="../assets/images/profile.png" alt="#">
+					</button>
+					<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<span class="sr-only">Toggle Dropdown</span>
+					</button>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="<?= base_url("CustomersController/process_logout") ?>">Logout</a>
+						<a class="dropdown-item" href="<?php /*= base_url("") */?>">Settings</a>
+					</div>
+				</div>
+			<?php else: ?>
+				<a class="signup_btn" href="signup.html">Signup</a>
+				<a class="login_btn" href="<?=base_url('CustomersController/view_login_form');?>">Login</a>
+			<?php endif; ?>
+		</div>
 	</header>
 	<aside>
 		<a href="products_dashboard.html"><img src="../assets/images/organic_shop_logo.svg" alt="Organic Shop"></a>
-		<!-- <ul>
+		 <ul>
 			<li class="active"><a href="#"></a></li>
 			<li><a href="#"></a></li>
-		</ul> -->
+		</ul>
 	</aside>
 	<section >
 		<form action="process.php" method="post" class="search_form">
@@ -81,6 +96,7 @@
 			</ul>
 		</form>
 		<div>
+			<!--TODO: Fetch the products-->
 			<h3>All Products(46)</h3>
 			<ul>
 				<li>
@@ -98,156 +114,7 @@
 						<span class="price">$ 10</span>
 					</a>
 				</li>
-				<li>
-					<a href="product_view.html">
-						<img src="../assets/images/food.png" alt="#">
-						<h3>Vegetables</h3>
-						<ul class="rating">
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
-						<span>36 Rating</span>
-						<span class="price">$ 10</span>
-					</a>
-				</li>
-				<li>
-					<a href="product_view.html">
-						<img src="../assets/images/food.png" alt="#">
-						<h3>Vegetables</h3>
-						<ul class="rating">
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
-						<span>36 Rating</span>
-						<span class="price">$ 10</span>
-					</a>
-				</li>
-				<li>
-					<a href="product_view.html">
-						<img src="../assets/images/food.png" alt="#">
-						<h3>Vegetables</h3>
-						<ul class="rating">
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
-						<span>36 Rating</span>
-						<span class="price">$ 10</span>
-					</a>
-				</li>
-				<li>
-					<a href="product_view.html">
-						<img src="../assets/images/food.png" alt="#">
-						<h3>Vegetables</h3>
-						<ul class="rating">
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
-						<span>36 Rating</span>
-						<span class="price">$ 10</span>
-					</a>
-				</li>
-				<li>
-					<a href="product_view.html">
-						<img src="../assets/images/food.png" alt="#">
-						<h3>Vegetables</h3>
-						<ul class="rating">
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
-						<span>36 Rating</span>
-						<span class="price">$ 10</span>
-					</a>
-				</li>
-				<li>
-					<a href="product_view.html">
-						<img src="../assets/images/food.png" alt="#">
-						<h3>Vegetables</h3>
-						<ul class="rating">
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
-						<span>36 Rating</span>
-						<span class="price">$ 10</span>
-					</a>
-				</li>
-				<li>
-					<a href="product_view.html">
-						<img src="../assets/images/food.png" alt="#">
-						<h3>Vegetables</h3>
-						<ul class="rating">
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
-						<span>36 Rating</span>
-						<span class="price">$ 10</span>
-					</a>
-				</li>
-				<li>
-					<a href="product_view.html">
-						<img src="../assets/images/food.png" alt="#">
-						<h3>Vegetables</h3>
-						<ul class="rating">
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
-						<span>36 Rating</span>
-						<span class="price">$ 10</span>
-					</a>
-				</li>
-				<li>
-					<a href="product_view.html">
-						<img src="../assets/images/food.png" alt="#">
-						<h3>Vegetables</h3>
-						<ul class="rating">
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
-						<span>36 Rating</span>
-						<span class="price">$ 10</span>
-					</a>
-				</li>
-				<li>
-					<a href="product_view.html">
-						<img src="../assets/images/food.png" alt="#">
-						<h3>Vegetables</h3>
-						<ul class="rating">
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-							<li></li>
-						</ul>
-						<span>36 Rating</span>
-						<span class="price">$ 10</span>
-					</a>
-				</li>
+
 			</ul>
 		</div>
 	</section>
