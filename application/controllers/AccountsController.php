@@ -1,10 +1,10 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed.');
 
-class CustomersController extends CI_Controller
+class AccountsController extends CI_Controller
 {
 	public function __construct() {
 		parent:: __construct();
-		$this->load->model('CustomerModel');
+		$this->load->model('AccountModel');
 	}
 	public function view_signup_form() {
 		$this->load->view('customer/signup_view');
@@ -44,7 +44,7 @@ class CustomersController extends CI_Controller
 		}
 		else {
 			/*comment: if inputs are valid, create an account*/
-			$result = $this->CustomerModel->create_customer($signupInput);
+			$result = $this->AccountModel->create_customer($signupInput);
 			if ($result) {
 				/*COMMENT: If success proceed to login*/
 				$data['response'] = array(
@@ -84,7 +84,7 @@ class CustomersController extends CI_Controller
 		}
 		else {
 			/*  NOTE: Verify the password and proceed to login if inputted password is correct */
-			$isLoggedIn = $this->CustomerModel->process_login_form($loginInput);
+			$isLoggedIn = $this->AccountModel->process_login_form($loginInput);
 
 			if ($isLoggedIn['result'] == TRUE) {
 				$data['response'] = array(
@@ -110,6 +110,6 @@ class CustomersController extends CI_Controller
 	}
 	public function process_logout() {
 		$this->session->sess_destroy();
-		redirect("CustomersController/view_login_form");
+		redirect("AccountsController/view_login_form");
 	}
 }
