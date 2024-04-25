@@ -1,4 +1,4 @@
-<?php defined("BASEPATH") or exit("No direct script access allowed.");
+<?php defined('BASEPATH') or exit('No direct script access allowed.');
 
 class ProductModel extends CI_Model {
 
@@ -60,6 +60,26 @@ class ProductModel extends CI_Model {
 			return $query->result_array();
 		} else {
 			return null;
+		}
+	}
+	public function fetch_single_product($productId) {
+		$sql = 'SELECT * FROM `product` WHERE `product_id` = ?';
+		$query = $this->db->query($sql, array($productId));
+
+		if($query) {
+			return $query->result_array();
+		} else {
+			show_404();
+		}
+	}
+	public function fetch_image($productId) {
+		$sql = 'SELECT `image_url` FROM `product_image` WHERE `product_id` = ?';
+		$query = $this->db->query($sql, array($productId));
+
+		if ($query) {
+			return $query->result_array();
+		} else {
+			show_404();
 		}
 	}
 }
