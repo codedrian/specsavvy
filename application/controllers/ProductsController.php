@@ -99,4 +99,11 @@ class ProductsController extends CI_Controller
 		$data['products'] = $this->ProductModel->fetch_all_product();
 		echo json_encode($data);
 	}
+	public function product_details($productId) {
+		$data['product'] =$this->ProductModel->fetch_single_product($productId);
+		$data['image'] = $this->ProductModel->fetch_image($productId);
+		$data['product_json'] = json_encode($data['product']);
+		$data['image_json'] = json_encode($data['image']);
+		$this->load->view('customer/product_view', $data);
+	}
 }
