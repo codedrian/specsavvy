@@ -14,7 +14,7 @@ class AdminsController extends CI_Controller
         $this->load->view("admin/login_view");
     }
     public function process_signup_form() {
-        /* TODO: sanitze user input. If I set TRUE the xss clean in config.php, it automatically apply xss clean without doing this and applyingxss_clean. TEST IT. */
+
         $signupInput = array(
             "first_name" => $this->input->post("first_name", TRUE),
             "last_name" => $this->input->post("last_name", TRUE),

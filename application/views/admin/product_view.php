@@ -16,9 +16,120 @@ defined("BASEPATH") or exit("No direct script access allowed");
     <script src="../assets/js/vendor/bootstrap-select.min.js"></script>
     <link rel="stylesheet" href="../assets/css/vendor/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/css/vendor/bootstrap-select.min.css">
-
-    <link rel="stylesheet" href="../assets/css/custom/admin_global.css">
+    <link rel="stylesheet" href="../assets/css/custom/admin_global_products.css">
     <script src="../assets/js/global/admin_products.js"></script>
+	<!-- toastr cdn -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<!--DataTable css and js-->
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css">
+	<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			/*NOTE: handles the fetching of category in form's category dropdown*/
+					$.ajax({
+						url: "<?=base_url('')?>CategoriesController/fetch_category",
+						type: 'GET',
+						dataType: 'json',
+						success: function(response) {
+							response.category.forEach(function(category) {
+								let name = category.name;
+								let id = category.category_id;
+								$('#category_picker').append(`<option value='${id}'>${name}</option>`);
+							})
+						},
+						error: function(jgXHR, textStatus, errorThrown) {
+							console.error('AJAX Error:', textStatus, errorThrown);
+						}
+					});
+			/*TODO: Fix the products table*/
+			function fetchProduct() {
+				$.get("<?=base_url('ProductsController/fetch_all_product');?>", function(response) {
+					console.log(response);
+					$('.products_table').DataTable({
+						ajax: {
+							url: "<?=base_url('ProductsController/fetch_all_product');?>",
+							dataSrc: 'response'
+						},
+						columns: [
+							/*todo: remove the div tag that contains the product name inside span*/
+							{ data: 'image_url',
+								render: function(data, type, row)
+								{
+									if (type === 'display' && data) {
+										let image_url = '../' + data;
+										return '<span>' +
+													'<img src="' + image_url + '" alt="' + row.name + '" width="100">' + '<p>' + row.name + '</p>' +
+											   '</span>';
+									} else {
+										return data;
+									}
+								}
+							},
+							{ data: 'product_id',
+								render: function(data, row) {
+									return '<span>' + data + '</span>';
+								}
+							},
+							{ data: 'name', visible: false },
+							{ data: 'category_name',
+								render: function(data, row) {
+									return '<span>' + data + '</span>';
+								}
+							},
+							{ data: 'price',
+								render: function(data, row) {
+									return '<span>' + data + '</span>';
+								}
+							},
+							{ data: 'stock_level',
+								render: function(data, row) {
+									return '<span>' + data + '</span>';
+								}
+							},
+							{ data: null,
+								render: function(data, row) {
+									return '<button class="btn btn-primary btn-sm delete-btn edit_product" data-id="' + row.category_id + '">Edit</button>' +
+											'<button class="btn btn-danger btn-sm delete-btn delete_product" data-id="' + row.category_id + '">X</button>';
+								}
+							}
+						]
+					});
+					$('.dt-search').addClass('search_form');
+				}, 'json');
+			}
+			fetchProduct();
+
+			/*NOTE:This handles the form submission using ajax*/
+			$('#add_product_form').submit(function(e) {
+				e.preventDefault();
+				let formData = new FormData(this);
+				$.ajax({
+					url: "<?=base_url('')?>ProductsController/process_add_product",
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					dataType: 'json',
+					success: function(response) {
+						/*Set the new CSRF token to the hidden input*/
+						console.log(response);
+						$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.response.newCsrfToken);
+						if (response.response.status === 'success') {
+							$('.clearable').val('');
+							toastr["success"](response.response.message);
+						} else {
+							toastr['error'](response.response.message);
+						}
+					},
+					error: function(jgXHR, textStatus, errorThrown) {
+						console.error('AJAX Error:', textStatus, errorThrown);
+					}
+				});
+				return false;
+			});
+		});
+	</script>
 </head>
 <script>
 </script>
@@ -53,9 +164,9 @@ defined("BASEPATH") or exit("No direct script access allowed");
             </ul>
         </aside>
         <section>
-            <form action="process.php" method="post" class="search_form">
+            <!--<form action="process.php" method="post" class="search_form">
                 <input type="text" name="search" placeholder="Search Products">
-            </form>
+            </form>-->
             <!-- NOTE: This is the button modal categories -->
             <button class="add_product" data-toggle="modal" data-target="#add_product_modal">Add Product</button>
             <!-- NOTE: This is the sidebar button -->
@@ -77,35 +188,32 @@ defined("BASEPATH") or exit("No direct script access allowed");
                 </ul>
             </form>
             <!-- NOTE: INSERT products here using AJAX -->
-            <div>
+            <div class="data_table">
                 <table class="products_table">
                     <thead>
                         <tr>
-                            <th>
+                           <!-- <th>
                                 <h3>All Products</h3>
-                            </th>
+                            </th>-->
+							<th></th>
                             <th>ID #</th>
+							<th>Name</th>
+                            <th>Category</th>
                             <th>Price</th>
-                            <th>Caregory</th>
                             <th>Inventory</th>
-                            <th>Sold</th>
-                            <th></th>
+							<th></th><!--<th>TODO: Insert the buttons here</th>-->
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>
-                                <span>
-                                    <img src="../assets/images/food.png" alt="#">
-                                    Vegetables
-                                </span>
-                            </td>
-                            <td><span>123</span></td>
-                            <td><span>$ 10</span></td>
-                            <td><span>Vegetable</span></td>
-                            <td><span>123</span></td>
-                            <td><span>1000</span></td>
-                            <td>
+							<td></td>
+							<td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+							<td></td>
+                            <!--<td>
                                 <span>
                                     <button class="edit_product">Edit</button>
                                     <button class="delete_product">X</button>
@@ -115,79 +223,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
                                     <button type="button" class="cancel_remove">Cancel</button>
                                     <button type="submit">Remove</button>
                                 </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span>
-                                    <img src="../assets/images/food.png" alt="#">
-                                    Vegetables
-                                </span>
-                            </td>
-                            <td><span>123</span></td>
-                            <td><span>$ 10</span></td>
-                            <td><span>Vegetable</span></td>
-                            <td><span>123</span></td>
-                            <td><span>1000</span></td>
-                            <td>
-                                <span>
-                                    <button class="edit_product">Edit</button>
-                                    <button class="delete_product">X</button>
-                                </span>
-                                <form class="delete_product_form" action="process.php" method="post">
-                                    <p>Are you sure you want to remove this item?</p>
-                                    <button type="button" class="cancel_remove">Cancel</button>
-                                    <button type="submit">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span>
-                                    <img src="../assets/images/food.png" alt="#">
-                                    Vegetables
-                                </span>
-                            </td>
-                            <td><span>123</span></td>
-                            <td><span>$ 10</span></td>
-                            <td><span>Vegetable</span></td>
-                            <td><span>123</span></td>
-                            <td><span>1000</span></td>
-                            <td>
-                                <span>
-                                    <button class="edit_product">Edit</button>
-                                    <button class="delete_product">X</button>
-                                </span>
-                                <form class="delete_product_form" action="process.php" method="post">
-                                    <p>Are you sure you want to remove this item?</p>
-                                    <button type="button" class="cancel_remove">Cancel</button>
-                                    <button type="submit">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span>
-                                    <img src="../assets/images/food.png" alt="#">
-                                    Vegetables
-                                </span>
-                            </td>
-                            <td><span>123</span></td>
-                            <td><span>$ 10</span></td>
-                            <td><span>Vegetable</span></td>
-                            <td><span>123</span></td>
-                            <td><span>1000</span></td>
-                            <td>
-                                <span>
-                                    <button class="edit_product">Edit</button>
-                                    <button class="delete_product">X</button>
-                                </span>
-                                <form class="delete_product_form" action="process.php" method="post">
-                                    <p>Are you sure you want to remove this item?</p>
-                                    <button type="button" class="cancel_remove">Cancel</button>
-                                    <button type="submit">Remove</button>
-                                </form>
-                            </td>
+                            </td>-->
                         </tr>
                     </tbody>
                 </table>
@@ -198,46 +234,40 @@ defined("BASEPATH") or exit("No direct script access allowed");
             <div class="modal-dialog">
                 <div class="modal-content">
                     <button data-dismiss="modal" aria-label="Close" class="close_modal"></button>
-                    <form class="delete_product_form" action="process.php" method="post">
+                    <form id='add_product_form'  method='post' enctype="multipart/form-data">
+						<input type='hidden' name='<?= $this->security->get_csrf_token_name() ?>' value='<?= $this->security->get_csrf_hash() ?>'>
                         <h2>Add a Product</h2>
                         <ul>
                             <li>
-                                <input type="text" name="prouct_name" required>
+                                <input type="text" name="product_name" class="clearable" required>
                                 <label>Product Name</label>
                             </li>
                             <li>
-                                <textarea name="description" required></textarea>
+                                <textarea name="description" class="clearable" required></textarea>
                                 <label>Description</label>
                             </li>
                             <li>
                                 <label>Category</label>
-                                <select class="selectpicker">
-                                    <option>Vegetables</option>
-                                    <option>Fruits</option>
-                                    <option>Pork</option>
-                                    <option>Beef</option>
-                                    <option>Chicken</option>
+                                <select id='category_picker' class="selectpicker clearable" name='category'>
+									<option disabled selected >Select a category</option>
                                 </select>
                             </li>
                             <li>
-                                <input type="number" name="price" value="1" required>
+                                <input type="number" name="price" placeholder="1" class="clearable" required>
                                 <label>Price</label>
                             </li>
                             <li>
-                                <input type="number" name="inventory" value="1" required>
+                                <input type="number" name="inventory" placeholder="1" class="clearable" required>
                                 <label>Inventory</label>
                             </li>
-                            <li>
-                                <label>Upload Images (5 Max)</label>
-                                <ul>
-                                    <li><button type="button" class="upload_image"></button></li>
-                                </ul>
-                                <input type="file" name="image" accept="image/*">
-                            </li>
+                            <div>
+								<label>Upload Images (5 Max)</label>
+								<input type="file" class="d-block clearable" name="uploadedImages[]" multiple accept="image/*" max="5" >
+							</div>
                         </ul>
                         <button type="button" data-dismiss="modal" aria-label="Close">Cancel</button>
                         <button type="submit">Save</button>
-                    </form>
+                    </form>""
                 </div>
             </div>
         </div>

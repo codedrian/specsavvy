@@ -19,7 +19,7 @@ class AdminModel extends CI_Model {
     public function create_admin($signupInput) {
         $hashed_password = password_hash($signupInput["password"], PASSWORD_DEFAULT);
 
-        $sql = "INSERT INTO admin (first_name, last_name, email_address, hashed_password, created_at, updated_at) VALUES(?, ?, ?, ?, NOW(), NOW())";
+        $sql = "INSERT INTO `admin` (`first_name`, `last_name`, `email_address`, `hashed_password`, `created_at`, `updated_at`) VALUES(?, ?, ?, ?, NOW(), NOW())";
         $this->db->query($sql, array(
             $signupInput["first_name"],
             $signupInput["last_name"],
@@ -45,7 +45,6 @@ class AdminModel extends CI_Model {
         } else {
             return FALSE;
         }
-
     }
     public function process_login_form($loginInput) {
         $email = $loginInput["email_address"];
