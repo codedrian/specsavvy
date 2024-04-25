@@ -21,7 +21,6 @@
 
 <script>
 	$(document).ready(function() {
-		/*TODO: Fetch all products*/
 		$.ajax({
 			url: "<?=base_url('')?>ProductsController/fetch_all_product",
 			type: 'GET',
@@ -30,10 +29,10 @@
 				let product_count = response.products.length;
 				$('#product_count').append(`All Product (${product_count})`);
 				$.each(response.products, function(index, product) {
+					<!--TODO: Insert here the id so that we can retreive  the product when clicked-->
 					let productCard = `<li>
-										<!--TODO: Insert here the id so that we can retreive  the product when clicked-->
-											<a href="product_view.html">
-												<img src="../assets/images/food.png" alt="#">
+											<a href="<?=base_url('ProductsController/product_details/');?>${product.product_id}">
+												<img src="<?=base_url('${product.image_url}');?>" alt="#">
 												<h3>${product.name}</h3>
 												<ul class="rating">
 													<li></li>
@@ -57,29 +56,9 @@
 </script>
 <body>
 <div class="wrapper">
-		<!--TODO: use include so 1 header in all page-->
-	<header>
-		<h1>Let’s order fresh items for you.</h1>
-		<div>
-			<?php if ($this->session->userdata('is_log_in')) : ?>
-				<div class="btn-group">
-					<button class="profile mr-1">
-						<img src="../assets/images/profile.png" alt="#">
-					</button>
-					<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						<span class="sr-only">Toggle Dropdown</span>
-					</button>
-					<div class="dropdown-menu">
-						<a class="dropdown-item" href="<?= base_url("AccountsController/process_logout") ?>">Logout</a>
-						<a class="dropdown-item" href="<?php /*= base_url("") */?>">Settings</a>
-					</div>
-				</div>
-			<?php else: ?>
-				<a class="signup_btn" href="signup.html">Signup</a>
-				<a class="login_btn" href="<?=base_url('AccountsController/view_login_form');?>">Login</a>
-			<?php endif; ?>
-		</div>
-	</header>
+	<?php
+	$this->load->view('partials/header');
+	?>
 	<aside>
 		<a href="products_dashboard.html"><img src="../assets/images/organic_shop_logo.svg" alt="Organic Shop"></a>
 		 <ul>
