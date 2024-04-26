@@ -1,4 +1,5 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed.')?>
+<?php defined('BASEPATH') or exit('No direct script access allowed.');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,6 +21,9 @@
 
 <script>
 	$(document).ready(function() {
+		displayProductImage();
+		displayProductData();
+
 		$("#add_to_cart").click(function () {
 			$("<span class='added_to_cart'>Added to cart succesfully!</span>")
 				.insertAfter(this)
@@ -30,22 +34,32 @@
 				});
 			return false;
 		});
-		/*NOTE: This code fetches the product datas*/
-		let productData = <?= $product_json; ?>;
-		$.each(productData, function (index, product) {
 
-			$('.product_name').html(product.name);
-			$('.amount').html(product.price);
-			$('.description').html(product.description);
-		})
-		/*NOTE: This code fetches the product image*/
-		let productImage = <?= $image_json; ?>;
-		$.each(productImage, function(index, image) {
-			let image_path = "<?=base_url('');?>" + image.image_url;
-			/*echo <?=base_url('image.image_url');?>;*/
-			/*<li class="active"><button class="show_image"><img src="<?=base_url('image.image_url');?>" alt="food"></button></li>"*/
-			$('.product_gallery').append(`<li><button><img src='${image_path}'></button></li>`);
-		});
+		function displayProductData() {
+			let productData = <?= $product_json; ?>;
+			$.each(productData, function (index, product) {
+				let image_path = "<?=base_url('');?>" + product.image_url;
+				$('.product_name').html(product.name);
+				$('.amount').html(product.price);
+				$('.description').html(product.description);
+				$('.product_thumbnail').prepend(`<img src='${image_path}' alt="food">`);
+				$('#product_id').val(product.product_id);
+				let customer_id = <?=$this->session->userdata('customer_id');?>;
+				if (customer_id) {
+					$('#customer_id').val(customer_id);
+				}
+			})
+		}
+		function displayProductImage() {
+			let productImage = <?= $image_json; ?>;
+			$.each(productImage, function(index, image) {
+				let image_path = "<?=base_url('');?>" + image.image_url;
+				/*<li class="active"><button class="show_image"><img src="<?=base_url('image.image_url');?>" alt="food"></button></li>"*/
+				$('.product_gallery').append(`<li><button><img src='${image_path}'></button></li>`);
+			});
+		}
+
+
 	});
 </script>
 <body>
@@ -67,13 +81,10 @@
 		<a class="show_cart" href="cart.html">Cart (0)</a>
 		<a href="<?=base_url('AccountsController/view_dashboard');?>">Go Back</a>
 		<ul>
-			<li>
-				<img src="/thrifted-threads/assets/images/burger.png" alt="food">
+			<li class="product_thumbnail">
+			<!--Display the thumbnail here-->
 				<ul class="product_gallery">
-					<!--<li class="active"><button class="show_image"><img src="/thrifted-threads/assets/images/burger.png" alt="food"></button></li>
-					<li><button class="show_image"><img src="/thrifted-threads/assets/images/burger.png" alt="food"></button></li>
-					<li><button class="show_image"><img src="/thrifted-threads/assets/images/burger.png" alt="food"></button></li>
-					<li><button class="show_image"><img src="/thrifted-threads/assets/images/burger.png" alt="food"></button></li>-->
+				<!--Display product images here-->
 				</ul>
 			</li>
 			<li>
@@ -88,7 +99,12 @@
 				<span>36 Rating</span>
 				<span class="amount"></span>
 				<p class="description"></p>
+				<!--TODO: Add to cart logic here, submit the customer id, product id, quantity-->
 				<form action="" method="post" id="add_to_cart_form">
+
+					<input type='hidden' name='<?=$this->security->get_csrf_token_name();?>' value='<?=$this->security->get_csrf_hash()?>'>
+					<input type='hidden' name='customer_id' id='customer_id' value="">
+					<input type='hidden' name='product_id' id='product_id'>
 					<ul>
 						<li>
 							<label>Quantity</label>
@@ -100,7 +116,8 @@
 						</li>
 						<li>
 							<label>Total Amount</label>
-							<span class="total_amount">$ 10</span>
+							<!--TODO: Display the total here-->
+							<span class="total_amount"></span>
 						</li>
 						<li><button type="submit" id="add_to_cart">Add to Cart</button></li>
 					</ul>
