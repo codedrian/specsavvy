@@ -21,45 +21,62 @@
 
 <script>
 	$(document).ready(function() {
+		let productId = "<?=$productId?>"
 		displayProductImage();
 		displayProductData();
-
-		$("#add_to_cart").click(function () {
-			$("<span class='added_to_cart'>Added to cart succesfully!</span>")
-				.insertAfter(this)
-				.fadeIn()
-				.delay(1000)
-				.fadeOut(function () {
-					$(this).remove();
-				});
-			return false;
-		});
-
 		function displayProductData() {
-			let productData = <?= $product_json; ?>;
-			$.each(productData, function (index, product) {
-				let image_path = "<?=base_url('');?>" + product.image_url;
-				$('.product_name').html(product.name);
-				$('.amount').html(product.price);
-				$('.description').html(product.description);
-				$('.product_thumbnail').prepend(`<img src='${image_path}' alt="food">`);
-				$('#product_id').val(product.product_id);
-				let customer_id = <?=$this->session->userdata('customer_id');?>;
-				if (customer_id) {
-					$('#customer_id').val(customer_id);
+			$.ajax({
+				url: `<?=base_url("");?>ProductsController/fetch_product_details/${productId}`,
+				type: "GET",
+				dataType: "json",
+				success: function(response) {
+					console.log(response);
+					$.each(response.productData, function (index, product) {
+						let image_path = "<?=base_url('');?>" + product.image_url;
+						$('.product_name').html(product.name);
+						$('.amount').html(product.price);
+						$('.description').html(product.description);
+						$('.product_thumbnail').prepend(`<img src='${image_path}' alt="food">`);
+						$('#product_id').val(product.product_id);
+						let customer_id = <?=$this->session->userdata('customer_id');?>;
+						if (customer_id) {
+							$('#customer_id').val(customer_id);
+						}
+					})
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('AJAX Error:', textStatus, errorThrown);
+				}
+			})
+			$("#add_to_cart").click(function () {
+				$("<span class='added_to_cart'>Added to cart succesfully!</span>")
+					.insertAfter(this)
+					.fadeIn()
+					.delay(1000)
+					.fadeOut(function () {
+						$(this).remove();
+					});
+				return false;
+			});
+		}
+		function displayProductImage() {
+			$.ajax({
+				url: `<?=base_url("");?>ProductsController/fetch_product_image/${productId}`,
+				type: "GET",
+				dataType: "json",
+				success: function(response) {
+					console.log(response);
+					$.each(response.images, function(index, image) {
+						let image_path = "<?=base_url('');?>" + image.image_url;
+						$('.product_gallery').append(`<li><button><img src='${image_path}'></button></li>`);
+					});
+
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('AJAX Error:', textStatus, errorThrown);
 				}
 			})
 		}
-		function displayProductImage() {
-			let productImage = <?= $image_json; ?>;
-			$.each(productImage, function(index, image) {
-				let image_path = "<?=base_url('');?>" + image.image_url;
-				/*<li class="active"><button class="show_image"><img src="<?=base_url('image.image_url');?>" alt="food"></button></li>"*/
-				$('.product_gallery').append(`<li><button><img src='${image_path}'></button></li>`);
-			});
-		}
-
-
 	});
 </script>
 <body>
