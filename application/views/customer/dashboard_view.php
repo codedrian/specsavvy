@@ -29,9 +29,8 @@
 				let product_count = response.products.length;
 				$('#product_count').append(`All Product (${product_count})`);
 				$.each(response.products, function(index, product) {
-					<!--TODO: Insert here the id so that we can retreive  the product when clicked-->
 					let productCard = `<li>
-											<a href="<?=base_url('ProductsController/product_details/');?>${product.product_id}">
+											<a href="<?=base_url('ProductsController/view_product_details/');?>${product.product_id}">
 												<img src="<?=base_url('${product.image_url}');?>" alt="#">
 												<h3>${product.name}</h3>
 												<ul class="rating">
