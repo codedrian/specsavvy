@@ -63,7 +63,27 @@ class ProductModel extends CI_Model {
 		}
 	}
 	public function fetch_single_product($productId) {
-		$sql = 'SELECT * FROM `product` WHERE `product_id` = ?';
+			$sql = 'SELECT
+				p.product_id,
+				p.name,
+				p.price,
+				p.description,
+				p.stock_level,
+				c.name AS category_name,
+				(
+				SELECT
+					i.image_url
+				FROM
+					product_image i
+				WHERE
+					i.product_id = p.product_id
+				LIMIT 1
+			) AS image_url
+			FROM
+				product p
+			INNER JOIN category c ON
+				p.category_id = c.category_id
+			WHERE p.product_id = ?';
 		$query = $this->db->query($sql, array($productId));
 
 		if($query) {
