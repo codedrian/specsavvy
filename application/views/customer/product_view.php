@@ -89,6 +89,7 @@
 		}
 		function increaseQuantity(price) {
 			$('.increase_quantity').on('click', function() {
+
 				$('#quantity').attr('value', function(index, oldValue) {
 					return parseInt(oldValue, 10) + 1;
 				});
@@ -97,10 +98,13 @@
 		}
 		function decreaseQuantity(price) {
 			$('.decrease_quantity').on('click', function() {
-				$('#quantity').attr('value', function(index, oldValue) {
-					return parseInt(oldValue, 10) - 1;
-				});
-				updateTotal(price)
+				let quantity = $('#quantity').val();
+				if (quantity > 0) {
+					$('#quantity').attr('value', function(index, oldValue) {
+						return parseInt(oldValue, 10) - 1;
+					});
+					updateTotal(price)
+				}
 			});
 		}
 		function updateTotal(price) {
