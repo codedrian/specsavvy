@@ -28,8 +28,10 @@
 		displayProductImage();
 		displayProductData();
 		initializeCustomerId();
+		process_product_add_to_cart()
 
 		function displayProductData() {
+			/*TODO: Remove the console logs*/
 			$.ajax({
 				url: `<?=base_url("");?>ProductsController/fetch_product_details/${productId}`,
 				type: "GET",
@@ -47,14 +49,12 @@
 						increaseQuantity(product.price);
 						decreaseQuantity(product.price);
 					})
-					/*NOTE: This ensures to only retreive once .amount text is loaded in DOM*/
-
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log('AJAX Error:', textStatus, errorThrown);
 				}
 			})
-			$("#add_to_cart").click(function () {
+			/*$("#add_to_cart").click(function () {
 				$("<span class='added_to_cart'>Added to cart succesfully!</span>")
 					.insertAfter(this)
 					.fadeIn()
@@ -63,7 +63,7 @@
 						$(this).remove();
 					});
 				return false;
-			});
+			});*/
 		}
 		function displayProductImage() {
 			$.ajax({
@@ -99,7 +99,7 @@
 		function decreaseQuantity(price) {
 			$('.decrease_quantity').on('click', function() {
 				let quantity = $('#quantity').val();
-				if (quantity > 0) {
+				if (quantity > 1) {
 					$('#quantity').attr('value', function(index, oldValue) {
 						return parseInt(oldValue, 10) - 1;
 					});
@@ -111,6 +111,30 @@
 			let quantity = parseInt($('#quantity').val(), 10);
 			let total = quantity * price;
 			$('.total_amount').text(total)
+		}
+		/*ProductsController/process_product_add_to_Cart*/
+		function process_product_add_to_cart() {
+			$('#add_to_cart_form').submit(function(e) {
+				e.preventDefault();
+				const formAction = $(this).attr('action');
+				let formData = new FormData(this);
+
+				$.ajax({
+					url: formAction,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					dataType: 'json',
+					success: function(response) {
+						console.log(response);
+					},
+					error: function(jgXHR, textStatus, errorThrown) {
+						console.error('AJAX Error:', textStatus, errorThrown);
+					}
+				});
+			return false;
+			});
 		}
 
 	});
@@ -153,15 +177,14 @@
 				<span class="amount" id="amount"></span>
 				<p class="description"></p>
 				<!--TODO: Add to cart logic here, submit the customer id, product id, quantity-->
-				<form action="" method="post" id="add_to_cart_form">
-
+				<form action="<?=base_url('ProductsController/process_product_add_to_cart');?>" method="post" id="add_to_cart_form">
 					<input type='hidden' name='<?=$this->security->get_csrf_token_name();?>' value='<?=$this->security->get_csrf_hash()?>'>
 					<input type='hidden' name='customer_id' id='customer_id' value="">
 					<input type='hidden' name='product_id' id='product_id'>
 					<ul>
 						<li>
 							<label>Quantity</label>
-							<input type="text" min-value="1" value="1" id="quantity">
+							<input type="text" min-value="1" value="1" id="quantity" name="quantity">
 							<ul>
 								<li><button type="button" class="increase_quantity" data-quantity-ctrl="1"></button></li>
 								<li><button type="button" class="decrease_quantity" data-quantity-ctrl="0"></button></li>
@@ -169,7 +192,6 @@
 						</li>
 						<li>
 							<label>Total Amount</label>
-							<!--TODO: Display the total here-->
 							<span class="total_amount"></span>
 						</li>
 						<li><button type="submit" id="add_to_cart">Add to Cart</button></li>
