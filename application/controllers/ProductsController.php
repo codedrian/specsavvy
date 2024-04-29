@@ -101,10 +101,11 @@ class ProductsController extends CI_Controller
 	}
 	public function view_product_details($productId) {
 		$data['productId'] = $productId;
+		$data['customerId'] = $this->session->userdata('customer_id');
 		$this->load->view('customer/product_view', $data);
 	}
 	public function fetch_product_details($productId) {
-		$data['productData'] =$this->ProductModel->fetch_single_product($productId);
+		$data['productData'] = $this->ProductModel->fetch_single_product($productId);
 		echo json_encode($data);
 		exit();
 		/*TODO: delete exit*/
@@ -113,5 +114,34 @@ class ProductsController extends CI_Controller
 		$data['images'] = $this->ProductModel->fetch_image($productId);
 		echo json_encode($data);
 		exit();
+	}
+	public function process_product_add_to_cart() {
+
+		$cartData = array(
+			'customer_id' => $this->input->post('customer_id', TRUE),
+			'product_id' => $this->input->post('product_id', TRUE),
+			'quantity' => $this->input->post('quantity', TRUE)
+		);
+		$this->form_validation->set_rules('customer_id', 'Customer ID', 'required|trim|numeric');
+		$this->form_validation->set_rules('product_id', 'Product ID', 'required|trim|numeric');
+		$this->form_validation->set_rules('quantity', 'Quantity', 'required|trim|numeric');
+
+		if ($this->form_validation->run() == FALSE) {
+			$data['response'] = array(
+				'status' => 'error'
+			);
+			echo json_encode($data);
+			exit();
+
+		} else {
+			$data['result'] = $this->ProductModel->process_product_add_to_cart($cartData);
+
+			if($data['result']['is_submitted_successfully'] == TRUE) {
+				$data['response'] = array(
+					'status' => 'success'
+				);
+				echo json_encode($data);
+			}
+		}
 	}
 }
