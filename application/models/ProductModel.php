@@ -102,4 +102,16 @@ class ProductModel extends CI_Model {
 			show_404();
 		}
 	}
+	public function process_product_add_to_cart($cartData) {
+		$sql = 'INSERT INTO `cart`(`customer_id`, `product_id`, `quantity`) VALUES(?, ?, ?)';
+		$query = $this->db->query($sql, array($cartData['customer_id'], $cartData['product_id'], $cartData['quantity']));
+
+		if ($this->db->affected_rows() > 0) {
+			return array(
+				'is_submitted_successfully' => TRUE
+			);
+		} else {
+			return null;
+		}
+	}
 }
