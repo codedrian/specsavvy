@@ -21,9 +21,14 @@
 
 <script>
 	$(document).ready(function() {
+		/*NOTE: This is the clicked product ID*/
 		let productId = "<?=$productId?>"
+		/*$('.total_amount').text(23);*/
+
 		displayProductImage();
 		displayProductData();
+		initializeCustomerId();
+
 		function displayProductData() {
 			$.ajax({
 				url: `<?=base_url("");?>ProductsController/fetch_product_details/${productId}`,
@@ -34,15 +39,16 @@
 					$.each(response.productData, function (index, product) {
 						let image_path = "<?=base_url('');?>" + product.image_url;
 						$('.product_name').html(product.name);
-						$('.amount').html(product.price);
+						$('.amount').text(product.price);
 						$('.description').html(product.description);
 						$('.product_thumbnail').prepend(`<img src='${image_path}' alt="food">`);
 						$('#product_id').val(product.product_id);
-						let customer_id = <?=$this->session->userdata('customer_id');?>;
-						if (customer_id) {
-							$('#customer_id').val(customer_id);
-						}
+						/*Pass product price to this function*/
+						increaseQuantity(product.price);
+						decreaseQuantity(product.price);
 					})
+					/*NOTE: This ensures to only retreive once .amount text is loaded in DOM*/
+
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log('AJAX Error:', textStatus, errorThrown);
@@ -77,6 +83,32 @@
 				}
 			})
 		}
+		function initializeCustomerId() {
+			let customerId = "<?=$customerId?>";
+			$('#customer_id').val(customerId);
+		}
+		function increaseQuantity(price) {
+			$('.increase_quantity').on('click', function() {
+				$('#quantity').attr('value', function(index, oldValue) {
+					return parseInt(oldValue, 10) + 1;
+				});
+				updateTotal(price);
+			});
+		}
+		function decreaseQuantity(price) {
+			$('.decrease_quantity').on('click', function() {
+				$('#quantity').attr('value', function(index, oldValue) {
+					return parseInt(oldValue, 10) - 1;
+				});
+				updateTotal(price)
+			});
+		}
+		function updateTotal(price) {
+			let quantity = parseInt($('#quantity').val(), 10);
+			let total = quantity * price;
+			$('.total_amount').text(total)
+		}
+
 	});
 </script>
 <body>
@@ -114,7 +146,7 @@
 					<li></li>
 				</ul>
 				<span>36 Rating</span>
-				<span class="amount"></span>
+				<span class="amount" id="amount"></span>
 				<p class="description"></p>
 				<!--TODO: Add to cart logic here, submit the customer id, product id, quantity-->
 				<form action="" method="post" id="add_to_cart_form">
@@ -125,10 +157,10 @@
 					<ul>
 						<li>
 							<label>Quantity</label>
-							<input type="text" min-value="1" value="1">
+							<input type="text" min-value="1" value="1" id="quantity">
 							<ul>
-								<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-								<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
+								<li><button type="button" class="increase_quantity" data-quantity-ctrl="1"></button></li>
+								<li><button type="button" class="decrease_quantity" data-quantity-ctrl="0"></button></li>
 							</ul>
 						</li>
 						<li>
