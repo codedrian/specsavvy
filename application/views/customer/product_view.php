@@ -134,8 +134,8 @@
 			return false;
 			});
 		}
-		/*Fetch cart product count*/
 		function getCartProductCount() {
+		/*This function etch cart product count*/
 			$.ajax({
 				url: "<?=base_url('ProductsController/getCartProductCount');?>",
 				type: 'GET',
@@ -168,7 +168,7 @@
 		<form action="process.php" method="post" class="search_form">
 			<input type="text" name="search" placeholder="Search Products">
 		</form>
-		<a class="show_cart" href="cart.html"></a>
+		<a class="show_cart" href="<?=base_url('ProductsController/view_cart');?>"></a>
 		<a href="<?=base_url('AccountsController/view_dashboard');?>">Go Back</a>
 		<ul>
 			<li class="product_thumbnail">
@@ -189,7 +189,6 @@
 				<span>36 Rating</span>
 				<span class="amount" id="amount"></span>
 				<p class="description"></p>
-				<!--TODO: Add to cart logic here, submit the customer id, product id, quantity-->
 				<form action="<?=base_url('ProductsController/process_product_add_to_cart');?>" method="post" id="add_to_cart_form">
 					<input type='hidden' name='<?=$this->security->get_csrf_token_name();?>' value='<?=$this->security->get_csrf_hash()?>'>
 					<input type='hidden' name='customer_id' id='customer_id' value="">
