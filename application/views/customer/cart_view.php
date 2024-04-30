@@ -32,6 +32,65 @@
 				dataType: 'json',
 				success: function(response) {
 					console.log(response);
+					$.each(response.cart_items, function(index, cart) {
+						let cartItem = `<li>
+											<img src="<?=base_url('${cart.image_url}');?>" alt="">
+											<h3>${cart.name}</h3>
+											<span>₱ ${cart.price}</span>
+											<ul>
+												<li>
+													<label>Quantity</label>
+													<input type="text" min-value="1" value="${cart.quantity}">
+													<ul>
+														<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
+														<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
+													</ul>
+												</li>
+												<li>
+													<label>Total Amount</label>
+													<span class="total_amount">₱ ${cart.total_amount}</span>
+												</li>
+												<li>
+													<button type="button" class="remove_item"></button>
+												</li>
+											</ul>
+											<div>
+												<p>Are you sure you want to remove this item?</p>
+												<button type="button" class="cancel_remove">Cancel</button>
+												<button type="button" class="remove">Remove</button>
+											</div>
+										</li>`;
+						$('.cart_items').append(cartItem);
+					});
+
+
+					/*<li>
+						<img src="../assets/images/burger.png" alt="">
+							<h3>Vegetable</h3>
+							<span>$ 10</span>
+							<ul>
+								<li>
+									<label>Quantity</label>
+									<input type="text" min-value="1" value="1">
+										<ul>
+											<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
+											<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
+										</ul>
+								</li>
+								<li>
+									<label>Total Amount</label>
+									<span class="total_amount">$ 10</span>
+								</li>
+								<li>
+									<button type="button" class="remove_item"></button>
+								</li>
+							</ul>
+							<div>
+								<p>Are you sure you want to remove this item?</p>
+								<button type="button" class="cancel_remove">Cancel</button>
+								<button type="button" class="remove">Remove</button>
+							</div>
+					</li>*/
 				},
 				error: function(jqXHR, textStatus, errorThrown ) {
 					console.log('AJAX Error:', textStatus, errorThrown);
@@ -79,35 +138,8 @@
 		<button class="show_cart">Cart (0)</button>
 		<section>
 			<form class="cart_items_form">
+				<ul class="cart_items">
 				<!--TODO: Display the products here-->
-				<ul>
-					<li>
-						<img src="../assets/images/burger.png" alt="">
-						<h3>Vegetable</h3>
-						<span>$ 10</span>
-						<ul>
-							<li>
-								<label>Quantity</label>
-								<input type="text" min-value="1" value="1">
-								<ul>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
-								</ul>
-							</li>
-							<li>
-								<label>Total Amount</label>
-								<span class="total_amount">$ 10</span>
-							</li>
-							<li>
-								<button type="button" class="remove_item"></button>
-							</li>
-						</ul>
-						<div>
-							<p>Are you sure you want to remove this item?</p>
-							<button type="button" class="cancel_remove">Cancel</button>
-							<button type="button" class="remove">Remove</button>
-						</div>
-					</li>
 				</ul>
 			</form>
 			<form class="checkout_form">
