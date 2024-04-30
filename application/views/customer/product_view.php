@@ -32,13 +32,11 @@
 		getCartProductCount();
 
 		function displayProductData() {
-			/*TODO: Remove the console logs*/
 			$.ajax({
 				url: `<?=base_url("");?>ProductsController/fetch_product_details/${productId}`,
 				type: "GET",
 				dataType: "json",
 				success: function(response) {
-					console.log(response);
 					$.each(response.productData, function (index, product) {
 						let image_path = "<?=base_url('');?>" + product.image_url;
 						$('.product_name').html(product.name);
@@ -73,7 +71,6 @@
 				type: "GET",
 				dataType: "json",
 				success: function(response) {
-					console.log(response);
 					$.each(response.images, function(index, image) {
 						let image_path = "<?=base_url('');?>" + image.image_url;
 						$('.product_gallery').append(`<li><button><img src='${image_path}'></button></li>`);
@@ -128,7 +125,6 @@
 					contentType: false,
 					dataType: 'json',
 					success: function(response) {
-						console.log(response);
 						getCartProductCount();
 					},
 					error: function(jgXHR, textStatus, errorThrown) {
