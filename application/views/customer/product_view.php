@@ -29,6 +29,7 @@
 		displayProductData();
 		initializeCustomerId();
 		process_product_add_to_cart()
+		getCartProductCount();
 
 		function displayProductData() {
 			/*TODO: Remove the console logs*/
@@ -45,6 +46,7 @@
 						$('.description').html(product.description);
 						$('.product_thumbnail').prepend(`<img src='${image_path}' alt="food">`);
 						$('#product_id').val(product.product_id);
+						$('.total_amount').text(product.price);
 						/*Pass product price to this function*/
 						increaseQuantity(product.price);
 						decreaseQuantity(product.price);
@@ -54,7 +56,7 @@
 					console.log('AJAX Error:', textStatus, errorThrown);
 				}
 			})
-			/*$("#add_to_cart").click(function () {
+		/*	$("#add_to_cart").click(function () {
 				$("<span class='added_to_cart'>Added to cart succesfully!</span>")
 					.insertAfter(this)
 					.fadeIn()
@@ -112,7 +114,6 @@
 			let total = quantity * price;
 			$('.total_amount').text(total)
 		}
-		/*ProductsController/process_product_add_to_Cart*/
 		function process_product_add_to_cart() {
 			$('#add_to_cart_form').submit(function(e) {
 				e.preventDefault();
@@ -128,12 +129,28 @@
 					dataType: 'json',
 					success: function(response) {
 						console.log(response);
+						getCartProductCount();
 					},
 					error: function(jgXHR, textStatus, errorThrown) {
 						console.error('AJAX Error:', textStatus, errorThrown);
 					}
 				});
 			return false;
+			});
+		}
+		/*Fetch cart product count*/
+		function getCartProductCount() {
+			$.ajax({
+				url: "<?=base_url('ProductsController/getCartProductCount');?>",
+				type: 'GET',
+				dataType: 'json',
+				success: function(response) {
+					console.log(response);
+					$('.show_cart').text(`Cart (${response.response[0].total_product})`);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('AJAX Error:', textStatus, errorThrown);
+				}
 			});
 		}
 
@@ -155,7 +172,7 @@
 		<form action="process.php" method="post" class="search_form">
 			<input type="text" name="search" placeholder="Search Products">
 		</form>
-		<a class="show_cart" href="cart.html">Cart (0)</a>
+		<a class="show_cart" href="cart.html"></a>
 		<a href="<?=base_url('AccountsController/view_dashboard');?>">Go Back</a>
 		<ul>
 			<li class="product_thumbnail">
