@@ -21,15 +21,19 @@
 
 <script>
 	$(document).ready(function() {
-		$.ajax({
-			url: "<?=base_url('')?>ProductsController/fetch_all_product",
-			type: 'GET',
-			dataType: 'json',
-			success: function(response) {
-				let product_count = response.products.length;
-				$('#product_count').append(`All Product (${product_count})`);
-				$.each(response.products, function(index, product) {
-					let productCard = `<li>
+		displayProductDetail()
+		getCartProductCount();
+
+		function displayProductDetail() {
+			$.ajax({
+				url: "<?=base_url('')?>ProductsController/fetch_all_product",
+				type: 'GET',
+				dataType: 'json',
+				success: function(response) {
+					let product_count = response.products.length;
+					$('#product_count').append(`All Product (${product_count})`);
+					$.each(response.products, function(index, product) {
+						let productCard = `<li>
 											<a href="<?=base_url('ProductsController/view_product_details/');?>${product.product_id}">
 												<img src="<?=base_url('${product.image_url}');?>" alt="#">
 												<h3>${product.name}</h3>
@@ -44,13 +48,28 @@
 												<span class="price">$ 10</span>
 									   		</a>
 									  </li>`;
-				$('.product_list').append(productCard);
-				});
-			},
-			error: function(jqXHR, textStatus, errorThrown ) {
-				console.log('AJAX Error:', textStatus, errorThrown);
-			}
-		});
+						$('.product_list').append(productCard);
+					});
+				},
+				error: function(jqXHR, textStatus, errorThrown ) {
+					console.log('AJAX Error:', textStatus, errorThrown);
+				}
+			});
+		}
+		function getCartProductCount() {
+			/*This function etch cart product count*/
+			$.ajax({
+				url: "<?=base_url('ProductsController/getCartProductCount');?>",
+				type: 'GET',
+				dataType: 'json',
+				success: function(response) {
+					$('.show_cart').text(`Cart (${response.response[0].total_product})`);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('AJAX Error:', textStatus, errorThrown);
+				}
+			});
+		}
 	})
 </script>
 <body>
