@@ -144,4 +144,9 @@ class ProductsController extends CI_Controller
 			}
 		}
 	}
+	public function getCartProductCount() {
+		$data['response'] = $this->ProductModel->getCartProductCount();
+
+		echo json_encode($data);
+	}
 }
