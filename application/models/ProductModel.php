@@ -132,7 +132,12 @@ class ProductModel extends CI_Model {
 					p.product_id,
 					p.name,
 					p.price,
-					i.image_url,
+					(SELECT 
+					     i.image_url 
+					 FROM 
+					     product_image i
+					 WHERE i.product_id = p.product_id
+					 LIMIT 1) AS `image_url`,
 					SUM(p.price) AS `total_amount`,
 					SUM(IFNULL(c.quantity, 0)) AS `quantity`
 				FROM
@@ -141,8 +146,6 @@ class ProductModel extends CI_Model {
 					cus.customer_id = c.customer_id
 				INNER JOIN product p ON
 					p.product_id = c.product_id
-				INNER JOIN product_image i ON
-					i.product_id = p.product_id
 				WHERE cus.customer_id = ?
 				GROUP BY p.product_id ";
 
