@@ -1,4 +1,5 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed.')?>
+<?php defined('BASEPATH') or exit('No direct script access allowed.');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,32 +21,139 @@
 
 <script>
 	$(document).ready(function() {
-		$("#add_to_cart").click(function () {
-			$("<span class='added_to_cart'>Added to cart succesfully!</span>")
-				.insertAfter(this)
-				.fadeIn()
-				.delay(1000)
-				.fadeOut(function () {
-					$(this).remove();
+		/*NOTE: This is the clicked product ID*/
+		let productId = "<?=$productId?>"
+		/*$('.total_amount').text(23);*/
+
+		displayProductImage();
+		displayProductData();
+		initializeCustomerId();
+		process_product_add_to_cart()
+		getCartProductCount();
+
+		function displayProductData() {
+			/*TODO: Remove the console logs*/
+			$.ajax({
+				url: `<?=base_url("");?>ProductsController/fetch_product_details/${productId}`,
+				type: "GET",
+				dataType: "json",
+				success: function(response) {
+					console.log(response);
+					$.each(response.productData, function (index, product) {
+						let image_path = "<?=base_url('');?>" + product.image_url;
+						$('.product_name').html(product.name);
+						$('.amount').text(product.price);
+						$('.description').html(product.description);
+						$('.product_thumbnail').prepend(`<img src='${image_path}' alt="food">`);
+						$('#product_id').val(product.product_id);
+						$('.total_amount').text(product.price);
+						/*Pass product price to this function*/
+						increaseQuantity(product.price);
+						decreaseQuantity(product.price);
+					})
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('AJAX Error:', textStatus, errorThrown);
+				}
+			})
+		/*	$("#add_to_cart").click(function () {
+				$("<span class='added_to_cart'>Added to cart succesfully!</span>")
+					.insertAfter(this)
+					.fadeIn()
+					.delay(1000)
+					.fadeOut(function () {
+						$(this).remove();
+					});
+				return false;
+			});*/
+		}
+		function displayProductImage() {
+			$.ajax({
+				url: `<?=base_url("");?>ProductsController/fetch_product_image/${productId}`,
+				type: "GET",
+				dataType: "json",
+				success: function(response) {
+					console.log(response);
+					$.each(response.images, function(index, image) {
+						let image_path = "<?=base_url('');?>" + image.image_url;
+						$('.product_gallery').append(`<li><button><img src='${image_path}'></button></li>`);
+					});
+
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('AJAX Error:', textStatus, errorThrown);
+				}
+			})
+		}
+		function initializeCustomerId() {
+			let customerId = "<?=$customerId?>";
+			$('#customer_id').val(customerId);
+		}
+		function increaseQuantity(price) {
+			$('.increase_quantity').on('click', function() {
+
+				$('#quantity').attr('value', function(index, oldValue) {
+					return parseInt(oldValue, 10) + 1;
+				});
+				updateTotal(price);
+			});
+		}
+		function decreaseQuantity(price) {
+			$('.decrease_quantity').on('click', function() {
+				let quantity = $('#quantity').val();
+				if (quantity > 1) {
+					$('#quantity').attr('value', function(index, oldValue) {
+						return parseInt(oldValue, 10) - 1;
+					});
+					updateTotal(price)
+				}
+			});
+		}
+		function updateTotal(price) {
+			let quantity = parseInt($('#quantity').val(), 10);
+			let total = quantity * price;
+			$('.total_amount').text(total)
+		}
+		function process_product_add_to_cart() {
+			$('#add_to_cart_form').submit(function(e) {
+				e.preventDefault();
+				const formAction = $(this).attr('action');
+				let formData = new FormData(this);
+
+				$.ajax({
+					url: formAction,
+					type: 'POST',
+					data: formData,
+					processData: false,
+					contentType: false,
+					dataType: 'json',
+					success: function(response) {
+						console.log(response);
+						getCartProductCount();
+					},
+					error: function(jgXHR, textStatus, errorThrown) {
+						console.error('AJAX Error:', textStatus, errorThrown);
+					}
 				});
 			return false;
-		});
-		/*NOTE: This code fetches the product datas*/
-		let productData = <?= $product_json; ?>;
-		$.each(productData, function (index, product) {
+			});
+		}
+		/*Fetch cart product count*/
+		function getCartProductCount() {
+			$.ajax({
+				url: "<?=base_url('ProductsController/getCartProductCount');?>",
+				type: 'GET',
+				dataType: 'json',
+				success: function(response) {
+					console.log(response);
+					$('.show_cart').text(`Cart (${response.response[0].total_product})`);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('AJAX Error:', textStatus, errorThrown);
+				}
+			});
+		}
 
-			$('.product_name').html(product.name);
-			$('.amount').html(product.price);
-			$('.description').html(product.description);
-		})
-		/*NOTE: This code fetches the product image*/
-		let productImage = <?= $image_json; ?>;
-		$.each(productImage, function(index, image) {
-			let image_path = "<?=base_url('');?>" + image.image_url;
-			/*echo <?=base_url('image.image_url');?>;*/
-			/*<li class="active"><button class="show_image"><img src="<?=base_url('image.image_url');?>" alt="food"></button></li>"*/
-			$('.product_gallery').append(`<li><button><img src='${image_path}'></button></li>`);
-		});
 	});
 </script>
 <body>
@@ -64,16 +172,13 @@
 		<form action="process.php" method="post" class="search_form">
 			<input type="text" name="search" placeholder="Search Products">
 		</form>
-		<a class="show_cart" href="cart.html">Cart (0)</a>
+		<a class="show_cart" href="cart.html"></a>
 		<a href="<?=base_url('AccountsController/view_dashboard');?>">Go Back</a>
 		<ul>
-			<li>
-				<img src="/thrifted-threads/assets/images/burger.png" alt="food">
+			<li class="product_thumbnail">
+			<!--Display the thumbnail here-->
 				<ul class="product_gallery">
-					<!--<li class="active"><button class="show_image"><img src="/thrifted-threads/assets/images/burger.png" alt="food"></button></li>
-					<li><button class="show_image"><img src="/thrifted-threads/assets/images/burger.png" alt="food"></button></li>
-					<li><button class="show_image"><img src="/thrifted-threads/assets/images/burger.png" alt="food"></button></li>
-					<li><button class="show_image"><img src="/thrifted-threads/assets/images/burger.png" alt="food"></button></li>-->
+				<!--Display product images here-->
 				</ul>
 			</li>
 			<li>
@@ -86,21 +191,25 @@
 					<li></li>
 				</ul>
 				<span>36 Rating</span>
-				<span class="amount"></span>
+				<span class="amount" id="amount"></span>
 				<p class="description"></p>
-				<form action="" method="post" id="add_to_cart_form">
+				<!--TODO: Add to cart logic here, submit the customer id, product id, quantity-->
+				<form action="<?=base_url('ProductsController/process_product_add_to_cart');?>" method="post" id="add_to_cart_form">
+					<input type='hidden' name='<?=$this->security->get_csrf_token_name();?>' value='<?=$this->security->get_csrf_hash()?>'>
+					<input type='hidden' name='customer_id' id='customer_id' value="">
+					<input type='hidden' name='product_id' id='product_id'>
 					<ul>
 						<li>
 							<label>Quantity</label>
-							<input type="text" min-value="1" value="1">
+							<input type="text" min-value="1" value="1" id="quantity" name="quantity">
 							<ul>
-								<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-								<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
+								<li><button type="button" class="increase_quantity" data-quantity-ctrl="1"></button></li>
+								<li><button type="button" class="decrease_quantity" data-quantity-ctrl="0"></button></li>
 							</ul>
 						</li>
 						<li>
 							<label>Total Amount</label>
-							<span class="total_amount">$ 10</span>
+							<span class="total_amount"></span>
 						</li>
 						<li><button type="submit" id="add_to_cart">Add to Cart</button></li>
 					</ul>

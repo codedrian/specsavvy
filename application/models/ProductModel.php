@@ -63,7 +63,27 @@ class ProductModel extends CI_Model {
 		}
 	}
 	public function fetch_single_product($productId) {
-		$sql = 'SELECT * FROM `product` WHERE `product_id` = ?';
+			$sql = 'SELECT
+				p.product_id,
+				p.name,
+				p.price,
+				p.description,
+				p.stock_level,
+				c.name AS category_name,
+				(
+				SELECT
+					i.image_url
+				FROM
+					product_image i
+				WHERE
+					i.product_id = p.product_id
+				LIMIT 1
+			) AS image_url
+			FROM
+				product p
+			INNER JOIN category c ON
+				p.category_id = c.category_id
+			WHERE p.product_id = ?';
 		$query = $this->db->query($sql, array($productId));
 
 		if($query) {
@@ -80,6 +100,28 @@ class ProductModel extends CI_Model {
 			return $query->result_array();
 		} else {
 			show_404();
+		}
+	}
+	public function process_product_add_to_cart($cartData) {
+		$sql = 'INSERT INTO `cart`(`customer_id`, `product_id`, `quantity`) VALUES(?, ?, ?)';
+		$query = $this->db->query($sql, array($cartData['customer_id'], $cartData['product_id'], $cartData['quantity']));
+
+		if ($this->db->affected_rows() > 0) {
+			return array(
+				'is_submitted_successfully' => TRUE
+			);
+		} else {
+			return null;
+		}
+	}
+	public function getCartProductCount() {
+		$sql = "SELECT COUNT(DISTINCT product_id) AS `total_product` FROM `cart`";
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			return $query->result_array();
+		} else {
+			return null;
 		}
 	}
 }
