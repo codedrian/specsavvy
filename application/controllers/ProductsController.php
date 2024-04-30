@@ -2,9 +2,11 @@
 
 class ProductsController extends CI_Controller
 {
+	private $customer_id;
 	public function __construct() {
 		parent:: __construct();
 		$this->load->model('ProductModel');
+		$this->customer_id = $this->session->userdata('customer_id');
 	}
     public function process_add_product()
 	{
@@ -143,11 +145,14 @@ class ProductsController extends CI_Controller
 		}
 	}
 	public function getCartProductCount() {
-		$customer_id = $this->session->userdata('customer_id');
-		$data['response'] = $this->ProductModel->getCartProductCount($customer_id);
+		$data['response'] = $this->ProductModel->getCartProductCount($this->customer_id);
 		echo json_encode($data);
 	}
 	public function view_cart() {
 		$this->load->view('customer/cart_view');
+	}
+	public function getCartProducts() {
+		$data['response'] = $this->ProductModel->getCartProducts($this->customer_id);
+		echo json_encode($data);
 	}
 }
