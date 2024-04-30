@@ -88,7 +88,7 @@
 		<form action="process.php" method="post" class="search_form">
 			<input type="text" name="search" placeholder="Search Products">
 		</form>
-		<a class="show_cart" href="cart.html">Cart (0)</a>
+		<a class="show_cart" href="<?=base_url('ProductsController/view_cart');?>">Cart (0)</a>
 		<form action="process.php" method="post" class="categories_form">
 			<h3>Categories</h3>
 			<ul>
