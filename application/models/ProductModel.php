@@ -114,10 +114,42 @@ class ProductModel extends CI_Model {
 			return null;
 		}
 	}
-	public function getCartProductCount() {
-		$sql = "SELECT COUNT(DISTINCT product_id) AS `total_product` FROM `cart`";
-		$query = $this->db->query($sql);
+	public function getCartProductCount($customer_id) {
+		$sql = "SELECT COUNT(DISTINCT product_id) AS `total_product` FROM `cart` WHERE `customer_id` = ?";
+		$query = $this->db->query($sql, array($customer_id));
 
+		if ($query) {
+			return $query->result_array();
+		} else {
+			return null;
+		}
+	}
+
+	public function getCartProducts($customer_id) {
+		$sql = "SELECT
+					cus.first_name,
+					cus.last_name,
+					p.product_id,
+					p.name,
+					p.price,
+					(SELECT 
+					     i.image_url 
+					 FROM 
+					     product_image i
+					 WHERE i.product_id = p.product_id
+					 LIMIT 1) AS `image_url`,
+					SUM(p.price) AS `total_amount`,
+					SUM(IFNULL(c.quantity, 0)) AS `quantity`
+				FROM
+					customer cus
+				INNER JOIN cart c ON
+					cus.customer_id = c.customer_id
+				INNER JOIN product p ON
+					p.product_id = c.product_id
+				WHERE cus.customer_id = ?
+				GROUP BY p.product_id ";
+
+		$query = $this->db->query($sql, array($customer_id));
 		if ($query) {
 			return $query->result_array();
 		} else {

@@ -79,6 +79,9 @@ body .wrapper > section > section .cart_items_form > ul > li h3 {
   color: #7D7D7D;
   font: 16px/20px roboto_medium, sans-serif;
   margin-top: 30px;
+  width: 220px;
+  text-align: center;
+
 }
 body .wrapper > section > section .cart_items_form > ul > li > span {
   background-color: #F1F1F1;

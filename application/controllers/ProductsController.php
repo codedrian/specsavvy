@@ -2,9 +2,11 @@
 
 class ProductsController extends CI_Controller
 {
+	private $customer_id;
 	public function __construct() {
 		parent:: __construct();
 		$this->load->model('ProductModel');
+		$this->customer_id = $this->session->userdata('customer_id');
 	}
     public function process_add_product()
 	{
@@ -94,7 +96,6 @@ class ProductsController extends CI_Controller
 			}
 		}
 	}
-
 	public function fetch_all_product() {
 		$data['products'] = $this->ProductModel->fetch_all_product();
 		echo json_encode($data);
@@ -132,7 +133,6 @@ class ProductsController extends CI_Controller
 			);
 			echo json_encode($data);
 			exit();
-
 		} else {
 			$data['result'] = $this->ProductModel->process_product_add_to_cart($cartData);
 
@@ -145,8 +145,14 @@ class ProductsController extends CI_Controller
 		}
 	}
 	public function getCartProductCount() {
-		$data['response'] = $this->ProductModel->getCartProductCount();
-
+		$data['response'] = $this->ProductModel->getCartProductCount($this->customer_id);
+		echo json_encode($data);
+	}
+	public function view_cart() {
+		$this->load->view('customer/cart_view');
+	}
+	public function getCartProducts() {
+		$data['cart_items'] = $this->ProductModel->getCartProducts($this->customer_id);
 		echo json_encode($data);
 	}
 }
