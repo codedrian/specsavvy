@@ -114,9 +114,9 @@ class ProductModel extends CI_Model {
 			return null;
 		}
 	}
-	public function getCartProductCount() {
-		$sql = "SELECT COUNT(DISTINCT product_id) AS `total_product` FROM `cart`";
-		$query = $this->db->query($sql);
+	public function getCartProductCount($customer_id) {
+		$sql = "SELECT COUNT(DISTINCT product_id) AS `total_product` FROM `cart` WHERE `customer_id` = ?";
+		$query = $this->db->query($sql, array($customer_id));
 
 		if ($query) {
 			return $query->result_array();
