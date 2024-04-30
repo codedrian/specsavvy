@@ -152,7 +152,7 @@ class ProductsController extends CI_Controller
 		$this->load->view('customer/cart_view');
 	}
 	public function getCartProducts() {
-		$data['response'] = $this->ProductModel->getCartProducts($this->customer_id);
+		$data['cart_items'] = $this->ProductModel->getCartProducts($this->customer_id);
 		echo json_encode($data);
 	}
 }
