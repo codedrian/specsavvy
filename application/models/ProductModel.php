@@ -131,6 +131,7 @@ class ProductModel extends CI_Model {
 					cus.last_name,
 					p.product_id,
 					p.name,
+					p.price,
 					i.image_url,
 					SUM(p.price) AS `total_amount`,
 					SUM(IFNULL(c.quantity, 0)) AS `quantity`
