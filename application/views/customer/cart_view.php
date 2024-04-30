@@ -20,18 +20,51 @@
 </head>
 
 <script>
+	/*TODO: Fetch the cart item*/
 	$(document).ready(function() {
+		getCartProductCount()
+		getCartProducts();
+
+		function getCartProducts() {
+			$.ajax({
+				url: "<?=base_url('ProductsController/getCartProducts');?>",
+				type: 'GET',
+				dataType: 'json',
+				success: function(response) {
+					console.log(response);
+				},
+				error: function(jqXHR, textStatus, errorThrown ) {
+					console.log('AJAX Error:', textStatus, errorThrown);
+				}
+			});
+		}
+
+		function getCartProductCount() {
+			/*This function etch cart product count*/
+			$.ajax({
+				url: "<?=base_url('ProductsController/getCartProductCount');?>",
+				type: 'GET',
+				dataType: 'json',
+				success: function(response) {
+					$('.show_cart').text(`Cart (${response.response[0].total_product})`);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('AJAX Error:', textStatus, errorThrown);
+				}
+			});
+		}
 	});
 </script>
 <body>
 <div class="wrapper">
-	<header>
+	<!--<header>
 		<h1>Let’s order fresh items for you.</h1>
 		<div>
 			<a class="signup_btn" data-toggle="modal" data-target="#signup_modal">Signup</a>
 			<a class="login_btn" data-toggle="modal" data-target="#login_modal">Login</a>
 		</div>
-	</header>
+	</header>-->
+	<?php $this->load->view('partials/header');?>
 	<aside>
 		<a href="catalogue.html"><img src="../assets/images/organic_shop_logo.svg" alt="Organic Shop"></a>
 		<!-- <ul>
@@ -46,142 +79,8 @@
 		<button class="show_cart">Cart (0)</button>
 		<section>
 			<form class="cart_items_form">
+				<!--TODO: Display the products here-->
 				<ul>
-					<li>
-						<img src="../assets/images/burger.png" alt="">
-						<h3>Vegetable</h3>
-						<span>$ 10</span>
-						<ul>
-							<li>
-								<label>Quantity</label>
-								<input type="text" min-value="1" value="1">
-								<ul>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
-								</ul>
-							</li>
-							<li>
-								<label>Total Amount</label>
-								<span class="total_amount">$ 10</span>
-							</li>
-							<li>
-								<button type="button" class="remove_item"></button>
-							</li>
-						</ul>
-						<div>
-							<p>Are you sure you want to remove this item?</p>
-							<button type="button" class="cancel_remove">Cancel</button>
-							<button type="button" class="remove">Remove</button>
-						</div>
-					</li>
-					<li>
-						<img src="../assets/images/burger.png" alt="">
-						<h3>Vegetable</h3>
-						<span>$ 10</span>
-						<ul>
-							<li>
-								<label>Quantity</label>
-								<input type="text" min-value="1" value="1">
-								<ul>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
-								</ul>
-							</li>
-							<li>
-								<label>Total Amount</label>
-								<span class="total_amount">$ 10</span>
-							</li>
-							<li>
-								<button type="button" class="remove_item"></button>
-							</li>
-						</ul>
-						<div>
-							<p>Are you sure you want to remove this item?</p>
-							<button type="button" class="cancel_remove">Cancel</button>
-							<button type="button" class="remove">Remove</button>
-						</div>
-					</li>
-					<li>
-						<img src="../assets/images/burger.png" alt="">
-						<h3>Vegetable</h3>
-						<span>$ 10</span>
-						<ul>
-							<li>
-								<label>Quantity</label>
-								<input type="text" min-value="1" value="1">
-								<ul>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
-								</ul>
-							</li>
-							<li>
-								<label>Total Amount</label>
-								<span class="total_amount">$ 10</span>
-							</li>
-							<li>
-								<button type="button" class="remove_item"></button>
-							</li>
-						</ul>
-						<div>
-							<p>Are you sure you want to remove this item?</p>
-							<button type="button" class="cancel_remove">Cancel</button>
-							<button type="button" class="remove">Remove</button>
-						</div>
-					</li>
-					<li>
-						<img src="../assets/images/burger.png" alt="">
-						<h3>Vegetable</h3>
-						<span>$ 10</span>
-						<ul>
-							<li>
-								<label>Quantity</label>
-								<input type="text" min-value="1" value="1">
-								<ul>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
-								</ul>
-							</li>
-							<li>
-								<label>Total Amount</label>
-								<span class="total_amount">$ 10</span>
-							</li>
-							<li>
-								<button type="button" class="remove_item"></button>
-							</li>
-						</ul>
-						<div>
-							<p>Are you sure you want to remove this item?</p>
-							<button type="button" class="cancel_remove">Cancel</button>
-							<button type="button" class="remove">Remove</button>
-						</div>
-					</li>
-					<li>
-						<img src="../assets/images/burger.png" alt="">
-						<h3>Vegetable</h3>
-						<span>$ 10</span>
-						<ul>
-							<li>
-								<label>Quantity</label>
-								<input type="text" min-value="1" value="1">
-								<ul>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-									<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
-								</ul>
-							</li>
-							<li>
-								<label>Total Amount</label>
-								<span class="total_amount">$ 10</span>
-							</li>
-							<li>
-								<button type="button" class="remove_item"></button>
-							</li>
-						</ul>
-						<div>
-							<p>Are you sure you want to remove this item?</p>
-							<button type="button" class="cancel_remove">Cancel</button>
-							<button type="button" class="remove">Remove</button>
-						</div>
-					</li>
 					<li>
 						<img src="../assets/images/burger.png" alt="">
 						<h3>Vegetable</h3>
@@ -285,11 +184,12 @@
 			</div>
 		</div>
 	</div>
-	<div class="modal fade form_modal" id="login_modal" tabindex="-1" aria-hidden="true">
+	<!--note: This is a signin modal-->
+	<!--<div class="modal fade form_modal" id="login_modal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<button data-dismiss="modal" aria-label="Close" class="close_modal"></button>
-				<form action="process.php" method="post">
+				<form action="<?php /*= base_url("") */?>AccountsController/process_login_form" method="post">
 					<h2>Login to order.</h2>
 					<button type="button" class="switch_to_signup">New Member? Register here.</button>
 					<ul>
@@ -306,8 +206,8 @@
 				</form>
 			</div>
 		</div>
-	</div>
-	<div class="modal fade form_modal" id="signup_modal" tabindex="-1" aria-hidden="true">
+	</div>-->
+	<!--<div class="modal fade form_modal" id="signup_modal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<button data-dismiss="modal" aria-label="Close" class="close_modal"></button>
@@ -340,7 +240,7 @@
 				</form>
 			</div>
 		</div>
-	</div>
+	</div>-->
 </div>
 <div class="popover_overlay"></div>
 </body>
