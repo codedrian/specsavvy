@@ -128,7 +128,12 @@
 					contentType: false,
 					dataType: 'json',
 					success: function(response) {
-						toastr["success"](response.response.message);
+						$("input[name='<?=$this->security->get_csrf_token_name();?>']").val(response.response.newCsrfToken)
+						if(response.response.status === 'success') {
+							toastr["success"](response.response.message);
+						} else {
+							toastr["error"](response.response.message);
+						}
 						getCartProductCount();
 					},
 					error: function(jgXHR, textStatus, errorThrown) {
@@ -146,6 +151,7 @@
 				dataType: 'json',
 				success: function(response) {
 					console.log(response);
+					$('')
 					$('.show_cart').text(`Cart (${response.response[0].total_product})`);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
