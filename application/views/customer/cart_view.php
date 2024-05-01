@@ -41,10 +41,10 @@
 											<ul>
 												<li>
 													<label>Quantity</label>
-													<input type="text" min-value="1" value="${cart.quantity}">
+													<input type="text" min-value="1" id="quantity" value="${cart.quantity}">
 													<ul>
-														<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-														<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
+														<li><button type="button" class="increase_quantity" data-quantity-ctrl="1"></button></li>
+														<li><button type="button" class="decrease_quantity" data-quantity-ctrl="0"></button></li>
 													</ul>
 												</li>
 												<li>
@@ -61,44 +61,17 @@
 												<button type="button" class="remove">Remove</button>
 											</div>
 										</li>`;
+
 						$('.cart_items').append(cartItem);
-					});
-
-
-					/*<li>
-						<img src="../assets/images/burger.png" alt="">
-							<h3>Vegetable</h3>
-							<span>$ 10</span>
-							<ul>
-								<li>
-									<label>Quantity</label>
-									<input type="text" min-value="1" value="1">
-										<ul>
-											<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-											<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
-										</ul>
-								</li>
-								<li>
-									<label>Total Amount</label>
-									<span class="total_amount">$ 10</span>
-								</li>
-								<li>
-									<button type="button" class="remove_item"></button>
-								</li>
-							</ul>
-							<div>
-								<p>Are you sure you want to remove this item?</p>
-								<button type="button" class="cancel_remove">Cancel</button>
-								<button type="button" class="remove">Remove</button>
-							</div>
-					</li>*/
+						});
+					    increaseQuantity();
+						decreaseQuantity();
 				},
 				error: function(jqXHR, textStatus, errorThrown ) {
 					console.log('AJAX Error:', textStatus, errorThrown);
 				}
 			});
 		}
-
 		function getCartProductCount() {
 			/*This function etch cart product count*/
 			$.ajax({
@@ -112,6 +85,32 @@
 					console.log('AJAX Error:', textStatus, errorThrown);
 				}
 			});
+		}
+		function increaseQuantity() {
+			$('.cart_items').on('click', '.increase_quantity', function() {
+				/*This code gets the quantity value*/
+				let quantityInput = $(this).closest('ul').closest('li').find('#quantity');
+				quantityInput.attr('value', function(index, oldValue) {
+					return parseInt(oldValue, 10) + 1;
+				});
+				/*updateTotal(price);*/
+			});
+		}
+		function decreaseQuantity() {
+			$('.cart_items').on('click', '.decrease_quantity', function() {
+				let quantityInput = $(this).closest('ul').closest('li').find('#quantity');
+				let quantity = quantityInput.val();
+				if (quantity > 1) {
+					quantityInput.attr('value', function(index, oldValue) {
+						return parseInt(oldValue, 10) - 1;
+					});
+				}
+			});
+		}
+		function updateTotal(price) {
+			let quantity = parseInt($('#quantity').val(), 10);
+			let total = quantity * price;
+			$('.total_amount').text(total)
 		}
 	});
 </script>
@@ -136,11 +135,10 @@
 		<form class="search_form">
 			<input type="text" name="search" placeholder="Search Products">
 		</form>
-		<button class="show_cart">Cart (0)</button>
+		<button class="show_cart"></button>
 		<section>
 			<form class="cart_items_form">
 				<ul class="cart_items">
-				<!--TODO: Display the products here-->
 				</ul>
 			</form>
 			<form class="checkout_form">
