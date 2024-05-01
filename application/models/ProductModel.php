@@ -122,7 +122,7 @@ class ProductModel extends CI_Model {
 		}
 	}
 	public function getCartProductCount($customer_id) {
-		$sql = "SELECT COUNT(DISTINCT product_id) AS `total_product` FROM `cart` WHERE `customer_id` = ?";
+		$sql = "SELECT COUNT(product_id) AS `total_product` FROM `cart` WHERE `customer_id` = ?";
 		$query = $this->db->query($sql, array($customer_id));
 
 		if ($query) {
@@ -144,8 +144,8 @@ class ProductModel extends CI_Model {
 					     product_image i
 					 WHERE i.product_id = p.product_id
 					 LIMIT 1) AS `image_url`,
-					SUM(p.price) AS `total_amount`,
-					SUM(IFNULL(c.quantity, 0)) AS `quantity`
+					SUM(IFNULL(c.quantity, 0)) AS `quantity`,
+					(p.price * quantity) AS total_amount 
 				FROM
 					customer cus
 				INNER JOIN cart c ON
