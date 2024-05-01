@@ -197,7 +197,7 @@ body .wrapper > section > div > ul > li a .category::before {
 body .wrapper > section > div > ul > li a .price {
   background-color: #F1F1F1;
   border-radius: 33px;
-  bottom: 25px;
+  bottom: 70px;
   color: #7971D9;
   display: inline-block;
   font: 15px/17px roboto_bold, sans-serif;
