@@ -14,6 +14,9 @@
 	<script src="/thrifted-threads/assets/js/vendor/bootstrap-select.min.js"></script>
 	<link rel="stylesheet" href="/thrifted-threads/assets/css/vendor/bootstrap.min.css">
 	<link rel="stylesheet" href="/thrifted-threads/assets/css/vendor/bootstrap-select.min.css">
+	<!-- toastr cdn -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 	<link rel="stylesheet" href="/thrifted-threads/assets/css/custom/global.css">
 	<link rel="stylesheet" href="<?=base_url('assets/css/custom/product_view.css');?>">
@@ -29,7 +32,7 @@
 		displayProductData();
 		initializeCustomerId();
 		process_product_add_to_cart()
-		getCartProductCount();
+		/*getCartProductCount();*/
 
 		function displayProductData() {
 			$.ajax({
@@ -125,6 +128,7 @@
 					contentType: false,
 					dataType: 'json',
 					success: function(response) {
+						toastr["success"](response.response.message);
 						getCartProductCount();
 					},
 					error: function(jgXHR, textStatus, errorThrown) {
