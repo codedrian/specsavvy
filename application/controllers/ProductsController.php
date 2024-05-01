@@ -138,10 +138,18 @@ class ProductsController extends CI_Controller
 
 			if($data['result']['is_submitted_successfully'] == TRUE) {
 				$data['response'] = array(
-					'status' => 'success'
+					'status' => 'success',
+					'message' => 'Add to cart successfully!',
+					'newCsrfToken' => $this->security->get_csrf_hash()
 				);
-				echo json_encode($data);
+			} else {
+				$data['response'] = array(
+					'status' => 'error',
+					'message' => 'Error adding the product. Please try again',
+					'newCsrfToken' => $this->security->get_csrf_hash()
+				);
 			}
+				echo json_encode($data);
 		}
 	}
 	public function getCartProductCount() {

@@ -103,19 +103,26 @@ class ProductModel extends CI_Model {
 		}
 	}
 	public function process_product_add_to_cart($cartData) {
-		$sql = 'INSERT INTO `cart`(`customer_id`, `product_id`, `quantity`) VALUES(?, ?, ?)';
-		$query = $this->db->query($sql, array($cartData['customer_id'], $cartData['product_id'], $cartData['quantity']));
+		/*TODO: Check first if products is already added in cart, if already added, update the quantity value, if not insert the product with the quantity*/
+		$sql = 'UPDATE `cart` SET  `quantity` = `quantity` + ? WHERE `customer_id` = ? AND `product_id` = ?';
+		$query = $this->db->query($sql, array($cartData['quantity'], $cartData['customer_id'], $cartData['product_id']));
 
-		if ($this->db->affected_rows() > 0) {
+		if ($this->db->affected_rows() == 0) {
+			$sql = 'INSERT INTO `cart`(`customer_id`, `product_id`, `quantity`) VALUES(?,?,?)';
+			$query = $this->db->query($sql, array($cartData['customer_id'], $cartData['product_id'], $cartData['quantity']));
+			if ($this->db->affected_rows() == 0) {
+				return array(
+					'is_submitted_successfully' => TRUE
+				);
+			}
+		} else {
 			return array(
 				'is_submitted_successfully' => TRUE
 			);
-		} else {
-			return null;
 		}
 	}
 	public function getCartProductCount($customer_id) {
-		$sql = "SELECT COUNT(DISTINCT product_id) AS `total_product` FROM `cart` WHERE `customer_id` = ?";
+		$sql = "SELECT COUNT(product_id) AS `total_product` FROM `cart` WHERE `customer_id` = ?";
 		$query = $this->db->query($sql, array($customer_id));
 
 		if ($query) {
@@ -124,7 +131,6 @@ class ProductModel extends CI_Model {
 			return null;
 		}
 	}
-
 	public function getCartProducts($customer_id) {
 		$sql = "SELECT
 					cus.first_name,
@@ -138,8 +144,8 @@ class ProductModel extends CI_Model {
 					     product_image i
 					 WHERE i.product_id = p.product_id
 					 LIMIT 1) AS `image_url`,
-					SUM(p.price) AS `total_amount`,
-					SUM(IFNULL(c.quantity, 0)) AS `quantity`
+					SUM(IFNULL(c.quantity, 0)) AS `quantity`,
+					(p.price * quantity) AS total_amount 
 				FROM
 					customer cus
 				INNER JOIN cart c ON

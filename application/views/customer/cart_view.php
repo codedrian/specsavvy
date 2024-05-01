@@ -36,19 +36,19 @@
 						let cartItem = `<li>
 											<img src="<?=base_url('${cart.image_url}');?>" alt="">
 											<h3>${cart.name}</h3>
-											<span>₱ ${cart.price}</span>
+											<span>₱${cart.price}</span>
 											<ul>
 												<li>
 													<label>Quantity</label>
-													<input type="text" min-value="1" value="${cart.quantity}">
+													<input type="text" min-value="1" id="quantity" value="${cart.quantity}">
 													<ul>
-														<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-														<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
+														<li><button type="button" class="increase_quantity" data-quantity-ctrl="1"></button></li>
+														<li><button type="button" class="decrease_quantity" data-quantity-ctrl="0"></button></li>
 													</ul>
 												</li>
 												<li>
 													<label>Total Amount</label>
-													<span class="total_amount">₱ ${cart.total_amount}</span>
+													<span class="total_amount" data-price="${cart.price}" id="total_amount">₱${cart.total_amount}</span>
 												</li>
 												<li>
 													<button type="button" class="remove_item"></button>
@@ -62,42 +62,13 @@
 										</li>`;
 						$('.cart_items').append(cartItem);
 					});
-
-
-					/*<li>
-						<img src="../assets/images/burger.png" alt="">
-							<h3>Vegetable</h3>
-							<span>$ 10</span>
-							<ul>
-								<li>
-									<label>Quantity</label>
-									<input type="text" min-value="1" value="1">
-										<ul>
-											<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="1"></button></li>
-											<li><button type="button" class="increase_decrease_quantity" data-quantity-ctrl="0"></button></li>
-										</ul>
-								</li>
-								<li>
-									<label>Total Amount</label>
-									<span class="total_amount">$ 10</span>
-								</li>
-								<li>
-									<button type="button" class="remove_item"></button>
-								</li>
-							</ul>
-							<div>
-								<p>Are you sure you want to remove this item?</p>
-								<button type="button" class="cancel_remove">Cancel</button>
-								<button type="button" class="remove">Remove</button>
-							</div>
-					</li>*/
+					modifyQuantity();
 				},
 				error: function(jqXHR, textStatus, errorThrown ) {
 					console.log('AJAX Error:', textStatus, errorThrown);
 				}
 			});
 		}
-
 		function getCartProductCount() {
 			/*This function etch cart product count*/
 			$.ajax({
@@ -111,6 +82,32 @@
 					console.log('AJAX Error:', textStatus, errorThrown);
 				}
 			});
+		}
+		function modifyQuantity() {
+			$('.cart_items').on('click', '.increase_quantity, .decrease_quantity', function() {
+				/*Get the quantity*/
+				let quantityInput = $(this).closest('ul').closest('li').find('#quantity');
+				let quantity = quantityInput.val();
+
+				if ($(this).hasClass('increase_quantity')) {
+					quantityInput.attr('value', function(index, oldValue){
+						return parseInt(oldValue, 10) + 1;
+					});
+				} else if (quantity > 1) {
+					quantityInput.attr('value', function(index, oldValue) {
+						return parseInt(oldValue, 10) - 1;
+					});
+				}
+				updateTotal(quantityInput);
+			});
+		}
+		function updateTotal(quantityInput) {
+			/*Get the total amount*/
+			let amountSpan =  quantityInput.closest('li').next().find('#total_amount');
+			let quantity = parseInt(quantityInput.val(), 10);
+			let price = parseFloat(amountSpan.data('price'));
+			let newTotal = price * quantity;
+			amountSpan.text('₱' + newTotal)
 		}
 	});
 </script>
@@ -135,11 +132,10 @@
 		<form class="search_form">
 			<input type="text" name="search" placeholder="Search Products">
 		</form>
-		<button class="show_cart">Cart (0)</button>
+		<button class="show_cart"></button>
 		<section>
 			<form class="cart_items_form">
 				<ul class="cart_items">
-				<!--TODO: Display the products here-->
 				</ul>
 			</form>
 			<form class="checkout_form">

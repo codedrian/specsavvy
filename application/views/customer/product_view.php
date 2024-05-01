@@ -14,6 +14,9 @@
 	<script src="/thrifted-threads/assets/js/vendor/bootstrap-select.min.js"></script>
 	<link rel="stylesheet" href="/thrifted-threads/assets/css/vendor/bootstrap.min.css">
 	<link rel="stylesheet" href="/thrifted-threads/assets/css/vendor/bootstrap-select.min.css">
+	<!-- toastr cdn -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 	<link rel="stylesheet" href="/thrifted-threads/assets/css/custom/global.css">
 	<link rel="stylesheet" href="<?=base_url('assets/css/custom/product_view.css');?>">
@@ -40,11 +43,11 @@
 					$.each(response.productData, function (index, product) {
 						let image_path = "<?=base_url('');?>" + product.image_url;
 						$('.product_name').html(product.name);
-						$('.amount').text(product.price);
+						$('.amount').text('₱' + product.price);
 						$('.description').html(product.description);
 						$('.product_thumbnail').prepend(`<img src='${image_path}' alt="food">`);
 						$('#product_id').val(product.product_id);
-						$('.total_amount').text(product.price);
+						$('.total_amount').text('₱' + product.price);
 						/*Pass product price to this function*/
 						increaseQuantity(product.price);
 						decreaseQuantity(product.price);
@@ -109,7 +112,7 @@
 		function updateTotal(price) {
 			let quantity = parseInt($('#quantity').val(), 10);
 			let total = quantity * price;
-			$('.total_amount').text(total)
+			$('.total_amount').text('₱' + total)
 		}
 		function process_product_add_to_cart() {
 			$('#add_to_cart_form').submit(function(e) {
@@ -125,6 +128,12 @@
 					contentType: false,
 					dataType: 'json',
 					success: function(response) {
+						$("input[name='<?=$this->security->get_csrf_token_name();?>']").val(response.response.newCsrfToken)
+						if(response.response.status === 'success') {
+							toastr["success"](response.response.message);
+						} else {
+							toastr["error"](response.response.message);
+						}
 						getCartProductCount();
 					},
 					error: function(jgXHR, textStatus, errorThrown) {
