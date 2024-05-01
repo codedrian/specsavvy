@@ -45,7 +45,7 @@
 													<li></li>
 												</ul>
 												<span>36 Rating</span>
-												<span class="price">$ 10</span>
+												<span class="price">₱ ${product.price}</span>
 									   		</a>
 									  </li>`;
 						$('.product_list').append(productCard);
