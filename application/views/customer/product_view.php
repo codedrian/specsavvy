@@ -40,11 +40,11 @@
 					$.each(response.productData, function (index, product) {
 						let image_path = "<?=base_url('');?>" + product.image_url;
 						$('.product_name').html(product.name);
-						$('.amount').text(product.price);
+						$('.amount').text('₱' + product.price);
 						$('.description').html(product.description);
 						$('.product_thumbnail').prepend(`<img src='${image_path}' alt="food">`);
 						$('#product_id').val(product.product_id);
-						$('.total_amount').text(product.price);
+						$('.total_amount').text('₱' + product.price);
 						/*Pass product price to this function*/
 						increaseQuantity(product.price);
 						decreaseQuantity(product.price);
