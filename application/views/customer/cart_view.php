@@ -31,7 +31,6 @@
 				type: 'GET',
 				dataType: 'json',
 				success: function(response) {
-					/*TODO: Add functionality when .increade/decrease quantity is clicked*/
 					console.log(response);
 					$.each(response.cart_items, function(index, cart) {
 						let cartItem = `<li>
@@ -49,7 +48,7 @@
 												</li>
 												<li>
 													<label>Total Amount</label>
-													<span class="total_amount">₱${cart.total_amount}</span>
+													<span class="total_amount" data-price="${cart.price}" id="total_amount">₱${cart.total_amount}</span>
 												</li>
 												<li>
 													<button type="button" class="remove_item"></button>
@@ -61,11 +60,9 @@
 												<button type="button" class="remove">Remove</button>
 											</div>
 										</li>`;
-
 						$('.cart_items').append(cartItem);
-						});
-					    increaseQuantity();
-						decreaseQuantity();
+					});
+					modifyQuantity();
 				},
 				error: function(jqXHR, textStatus, errorThrown ) {
 					console.log('AJAX Error:', textStatus, errorThrown);
@@ -86,31 +83,31 @@
 				}
 			});
 		}
-		function increaseQuantity() {
-			$('.cart_items').on('click', '.increase_quantity', function() {
-				/*This code gets the quantity value*/
-				let quantityInput = $(this).closest('ul').closest('li').find('#quantity');
-				quantityInput.attr('value', function(index, oldValue) {
-					return parseInt(oldValue, 10) + 1;
-				});
-				/*updateTotal(price);*/
-			});
-		}
-		function decreaseQuantity() {
-			$('.cart_items').on('click', '.decrease_quantity', function() {
+		function modifyQuantity() {
+			$('.cart_items').on('click', '.increase_quantity, .decrease_quantity', function() {
+				/*Get the quantity*/
 				let quantityInput = $(this).closest('ul').closest('li').find('#quantity');
 				let quantity = quantityInput.val();
-				if (quantity > 1) {
+
+				if ($(this).hasClass('increase_quantity')) {
+					quantityInput.attr('value', function(index, oldValue){
+						return parseInt(oldValue, 10) + 1;
+					});
+				} else if (quantity > 1) {
 					quantityInput.attr('value', function(index, oldValue) {
 						return parseInt(oldValue, 10) - 1;
 					});
 				}
+				updateTotal(quantityInput);
 			});
 		}
-		function updateTotal(price) {
-			let quantity = parseInt($('#quantity').val(), 10);
-			let total = quantity * price;
-			$('.total_amount').text(total)
+		function updateTotal(quantityInput) {
+			/*Get the total amount*/
+			let amountSpan =  quantityInput.closest('li').next().find('#total_amount');
+			let quantity = parseInt(quantityInput.val(), 10);
+			let price = parseFloat(amountSpan.data('price'));
+			let newTotal = price * quantity;
+			amountSpan.text('₱' + newTotal)
 		}
 	});
 </script>
