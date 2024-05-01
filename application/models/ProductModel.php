@@ -103,15 +103,22 @@ class ProductModel extends CI_Model {
 		}
 	}
 	public function process_product_add_to_cart($cartData) {
-		$sql = 'INSERT INTO `cart`(`customer_id`, `product_id`, `quantity`) VALUES(?, ?, ?)';
-		$query = $this->db->query($sql, array($cartData['customer_id'], $cartData['product_id'], $cartData['quantity']));
+		/*TODO: Check first if products is already added in cart, if already added, update the quantity value, if not insert the product with the quantity*/
+		$sql = 'UPDATE `cart` SET  `quantity` = `quantity` + ? WHERE `customer_id` = ? AND `product_id` = ?';
+		$query = $this->db->query($sql, array($cartData['quantity'], $cartData['customer_id'], $cartData['product_id']));
 
-		if ($this->db->affected_rows() > 0) {
+		if ($this->db->affected_rows() == 0) {
+			$sql = 'INSERT INTO `cart`(`customer_id`, `product_id`, `quantity`) VALUES(?,?,?)';
+			$query = $this->db->query($sql, array($cartData['customer_id'], $cartData['product_id'], $cartData['quantity']));
+			if ($this->db->affected_rows() == 0) {
+				return array(
+					'is_submitted_successfully' => TRUE
+				);
+			}
+		} else {
 			return array(
 				'is_submitted_successfully' => TRUE
 			);
-		} else {
-			return null;
 		}
 	}
 	public function getCartProductCount($customer_id) {
@@ -124,7 +131,6 @@ class ProductModel extends CI_Model {
 			return null;
 		}
 	}
-
 	public function getCartProducts($customer_id) {
 		$sql = "SELECT
 					cus.first_name,
