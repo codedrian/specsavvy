@@ -32,7 +32,7 @@
 		displayProductData();
 		initializeCustomerId();
 		process_product_add_to_cart()
-		/*getCartProductCount();*/
+		getCartProductCount();
 
 		function displayProductData() {
 			$.ajax({
@@ -112,7 +112,7 @@
 		function updateTotal(price) {
 			let quantity = parseInt($('#quantity').val(), 10);
 			let total = quantity * price;
-			$('.total_amount').text(total)
+			$('.total_amount').text('₱' + total)
 		}
 		function process_product_add_to_cart() {
 			$('#add_to_cart_form').submit(function(e) {
@@ -151,7 +151,6 @@
 				dataType: 'json',
 				success: function(response) {
 					console.log(response);
-					$('')
 					$('.show_cart').text(`Cart (${response.response[0].total_product})`);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
