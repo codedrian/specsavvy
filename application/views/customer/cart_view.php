@@ -31,12 +31,13 @@
 				type: 'GET',
 				dataType: 'json',
 				success: function(response) {
+					/*TODO: Add functionality when .increade/decrease quantity is clicked*/
 					console.log(response);
 					$.each(response.cart_items, function(index, cart) {
 						let cartItem = `<li>
 											<img src="<?=base_url('${cart.image_url}');?>" alt="">
 											<h3>${cart.name}</h3>
-											<span>₱ ${cart.price}</span>
+											<span>₱${cart.price}</span>
 											<ul>
 												<li>
 													<label>Quantity</label>
@@ -48,7 +49,7 @@
 												</li>
 												<li>
 													<label>Total Amount</label>
-													<span class="total_amount">₱ ${cart.total_amount}</span>
+													<span class="total_amount">₱${cart.total_amount}</span>
 												</li>
 												<li>
 													<button type="button" class="remove_item"></button>
