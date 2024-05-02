@@ -133,6 +133,7 @@ class ProductModel extends CI_Model {
 	}
 	public function getCartProducts($customer_id) {
 		$sql = "SELECT
+					cart_id,
 					cus.first_name,
 					cus.last_name,
 					p.product_id,
@@ -145,7 +146,7 @@ class ProductModel extends CI_Model {
 					 WHERE i.product_id = p.product_id
 					 LIMIT 1) AS `image_url`,
 					SUM(IFNULL(c.quantity, 0)) AS `quantity`,
-					(p.price * quantity) AS total_amount 
+					(p.price * quantity) AS total_amount
 				FROM
 					customer cus
 				INNER JOIN cart c ON
@@ -161,5 +162,9 @@ class ProductModel extends CI_Model {
 		} else {
 			return null;
 		}
+	}
+	public function modifyQuantity($cart_id, $quantity) {
+		$sql = ""
+			/*TODO: UPDATE and SET the quantity in cart table*/
 	}
 }
