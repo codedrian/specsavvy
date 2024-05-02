@@ -20,7 +20,6 @@
 </head>
 
 <script>
-	/*TODO: Fetch the cart item*/
 	$(document).ready(function() {
 		getCartProductCount()
 		getCartProducts();
@@ -40,7 +39,7 @@
 											<ul>
 												<li>
 													<label>Quantity</label>
-													<input type="text" min-value="1" id="quantity" value="${cart.quantity}">
+													<input type="text" min-value="1" id="quantity" data-cart_id="${cart.cart_id}" value="${cart.quantity}">
 													<ul>
 														<li><button type="button" class="increase_quantity" data-quantity-ctrl="1"></button></li>
 														<li><button type="button" class="decrease_quantity" data-quantity-ctrl="0"></button></li>
@@ -64,7 +63,7 @@
 					});
 					modifyQuantity();
 				},
-				error: function(jqXHR, textStatus, errorThrown ) {
+				error: function(jqXHR, textStatus, errorThrown) {
 					console.log('AJAX Error:', textStatus, errorThrown);
 				}
 			});
@@ -87,18 +86,39 @@
 			$('.cart_items').on('click', '.increase_quantity, .decrease_quantity', function() {
 				/*Get the quantity*/
 				let quantityInput = $(this).closest('ul').closest('li').find('#quantity');
-				let quantity = quantityInput.val();
+				let cart_id = quantityInput.data('cart_id');
+				let quantity = quantityInput.attr('value');
+				let newValue;
 
 				if ($(this).hasClass('increase_quantity')) {
 					quantityInput.attr('value', function(index, oldValue){
-						return parseInt(oldValue, 10) + 1;
+						newValue = parseInt(oldValue, 10) + 1;
+						return newValue;
 					});
 				} else if (quantity > 1) {
 					quantityInput.attr('value', function(index, oldValue) {
-						return parseInt(oldValue, 10) - 1;
+						newValue = parseInt(oldValue, 10) - 1;
+						return newValue;
 					});
 				}
 				updateTotal(quantityInput);
+				/*NOTE: In every update it should be save in database*/
+				$.ajax({
+					url: "<?=base_url('');?>ProductsController/modifyQuantity",
+					type: 'POST',
+					dataType: 'json',
+					data: {
+						cart_id: cart_id,
+						newQuantity: newValue
+					}
+				}
+					success: function(response) {
+						console.log(response);
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.log('AJAX error:', textStatus, errorThrown);
+					}
+				});
 			});
 		}
 		function updateTotal(quantityInput) {
