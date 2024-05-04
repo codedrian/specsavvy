@@ -103,7 +103,6 @@ class ProductModel extends CI_Model {
 		}
 	}
 	public function process_product_add_to_cart($cartData) {
-		/*TODO: Check first if products is already added in cart, if already added, update the quantity value, if not insert the product with the quantity*/
 		$sql = 'UPDATE `cart` SET  `quantity` = `quantity` + ? WHERE `customer_id` = ? AND `product_id` = ?';
 		$query = $this->db->query($sql, array($cartData['quantity'], $cartData['customer_id'], $cartData['product_id']));
 
@@ -163,8 +162,20 @@ class ProductModel extends CI_Model {
 			return null;
 		}
 	}
+	/*TODO: UPDATE and SET the quantity in cart table*/
 	public function modifyQuantity($cart_id, $quantity) {
-		$sql = ""
-			/*TODO: UPDATE and SET the quantity in cart table*/
+		$sql = "UPDATE `cart` SET quantity = ? WHERE `cart_id` = ?";
+		$query = $this->db->query($sql, array($quantity, $cart_id));
+
+		if ($this->db->affected_rows() > 0) {
+			return array(
+				'is_updated_successfully' => TRUE
+			);
+		}
+		else {
+			return array(
+				'is_updated_successfully' => FALSE
+			);
+		}
 	}
 }
