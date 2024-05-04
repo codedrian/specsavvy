@@ -32,34 +32,41 @@
 				success: function(response) {
 					console.log(response);
 					$.each(response.cart_items, function(index, cart) {
-						let cartItem = `<li>
-											<img src="<?=base_url('${cart.image_url}');?>" alt="">
-											<h3>${cart.name}</h3>
-											<span>₱${cart.price}</span>
+						let cartItem = `<form class="product">
 											<ul>
 												<li>
-													<label>Quantity</label>
-													<input type="text" min-value="1" id="quantity" data-cart_id="${cart.cart_id}" value="${cart.quantity}">
+													<img src="<?=base_url('${cart.image_url}');?>" alt="">
+													<h3>${cart.name}</h3>
+													<span>₱${cart.price}</span>
 													<ul>
-														<li><button type="button" class="increase_quantity" data-quantity-ctrl="1"></button></li>
-														<li><button type="button" class="decrease_quantity" data-quantity-ctrl="0"></button></li>
+														<li>
+															<label>Quantity</label>
+															<input type="text" min-value="1" id="quantity" data-cart_id="${cart.cart_id}" value="${cart.quantity}">
+															<ul>
+																<li><button type="button" class="increase_quantity" data-quantity-ctrl="1"></button></li>
+																<li><button type="button" class="decrease_quantity" data-quantity-ctrl="0"></button></li>
+															</ul>
+														</li>
+														<li>
+															<label>Total Amount</label>
+															<span class="total_amount" data-price="${cart.price}" id="total_amount">₱${cart.total_amount}</span>
+														</li>
+														<li>
+															<button type="button" class="remove_item"></button>
+														</li>
 													</ul>
-												</li>
-												<li>
-													<label>Total Amount</label>
-													<span class="total_amount" data-price="${cart.price}" id="total_amount">₱${cart.total_amount}</span>
-												</li>
-												<li>
-													<button type="button" class="remove_item"></button>
+													<div>
+														<p>Are you sure you want to remove this item?</p>
+														<button type="button" class="cancel_remove">Cancel</button>
+														<button type="button" class="remove">Remove</button>
+													</div>
 												</li>
 											</ul>
-											<div>
-												<p>Are you sure you want to remove this item?</p>
-												<button type="button" class="cancel_remove">Cancel</button>
-												<button type="button" class="remove">Remove</button>
-											</div>
-										</li>`;
-						$('.cart_items').append(cartItem);
+										</form>`;
+
+
+
+						$('.cart_items_form').append(cartItem);
 					});
 					modifyQuantity();
 				},
@@ -109,16 +116,16 @@
 					dataType: 'json',
 					data: {
 						cart_id: cart_id,
-						newQuantity: newValue
-					}
-				}
+						newQuantity: newValue,
+						<?= $this->security->get_csrf_token_name() ?>: '<?= $this->security->get_csrf_hash() ?>'
+					},
 					success: function(response) {
 						console.log(response);
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
 						console.log('AJAX error:', textStatus, errorThrown);
 					}
-				});
+				})
 			});
 		}
 		function updateTotal(quantityInput) {
@@ -154,10 +161,9 @@
 		</form>
 		<button class="show_cart"></button>
 		<section>
-			<form class="cart_items_form">
-				<ul class="cart_items">
-				</ul>
-			</form>
+			<div class="cart_items_form">
+				<!--TODO: INSERT  THE CART PRODUCTS HERE-->
+			</div>
 			<form class="checkout_form">
 				<h3>Shipping Information</h3>
 				<ul>
