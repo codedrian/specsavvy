@@ -23,6 +23,7 @@
 	$(document).ready(function() {
 		getCartProductCount()
 		getCartProducts();
+		processProductQuantityForm();
 
 		function getCartProducts() {
 			$.ajax({
@@ -33,6 +34,9 @@
 					console.log(response);
 					$.each(response.cart_items, function(index, cart) {
 						let cartItem = `<form class="product">
+											<input type="hidden" name="<?=$this->security->get_csrf_token_name();?>" value="<?=$this->security->get_csrf_hash();?>">
+											<input type="hidden" name="cart_id" value="${cart.cart_id}">
+											<input type="hidden" name="quantity" value="${cart.quantity}">
 											<ul>
 												<li>
 													<img src="<?=base_url('${cart.image_url}');?>" alt="">
@@ -41,7 +45,7 @@
 													<ul>
 														<li>
 															<label>Quantity</label>
-															<input type="text" min-value="1" id="quantity" data-cart_id="${cart.cart_id}" value="${cart.quantity}">
+															<input type="text" min-value="1" id="quantity" data-cart_id="${cart.cart_id}" value="${cart.quantity}" name="quantity">
 															<ul>
 																<li><button type="button" class="increase_quantity" data-quantity-ctrl="1"></button></li>
 																<li><button type="button" class="decrease_quantity" data-quantity-ctrl="0"></button></li>
@@ -63,12 +67,9 @@
 												</li>
 											</ul>
 										</form>`;
-
-
-
 						$('.cart_items_form').append(cartItem);
 					});
-					modifyQuantity();
+					updateProductQuantity();
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log('AJAX Error:', textStatus, errorThrown);
@@ -89,11 +90,9 @@
 				}
 			});
 		}
-		function modifyQuantity() {
-			$('.cart_items').on('click', '.increase_quantity, .decrease_quantity', function() {
-				/*Get the quantity*/
-				let quantityInput = $(this).closest('ul').closest('li').find('#quantity');
-				let cart_id = quantityInput.data('cart_id');
+		function updateProductQuantity() {
+			$('.product').on('click', '.increase_quantity, .decrease_quantity', function() {
+				let quantityInput = $(this).closest('form').find('#quantity');
 				let quantity = quantityInput.attr('value');
 				let newValue;
 
@@ -109,24 +108,29 @@
 					});
 				}
 				updateTotal(quantityInput);
-				/*NOTE: In every update it should be save in database*/
-				$.ajax({
-					url: "<?=base_url('');?>ProductsController/modifyQuantity",
-					type: 'POST',
-					dataType: 'json',
-					data: {
-						cart_id: cart_id,
-						newQuantity: newValue,
-						<?= $this->security->get_csrf_token_name() ?>: '<?= $this->security->get_csrf_hash() ?>'
-					},
-					success: function(response) {
-						console.log(response);
-					},
-					error: function(jqXHR, textStatus, errorThrown) {
-						console.log('AJAX error:', textStatus, errorThrown);
-					}
-				})
+				/*Submit the form when these buttons are clicked*/
+				$(this).closest('form').submit();
+				console.log($(this).closest('form'));
 			});
+		}
+
+		function processProductQuantityForm() {
+			$('.cart_items_form').on('submit', '.product', function(e) {
+				e.preventDefault();
+				alert('Form is submmitted');
+			/*$.ajax({
+				url: "<?=base_url('');?>ProductsController/modifyQuantity",
+				type: 'POST',
+				dataType: 'json',
+				data: productData,
+				success: function(response) {
+					console.log(response);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('AJAX error:', textStatus, errorThrown);
+				}
+			});*/
+			})
 		}
 		function updateTotal(quantityInput) {
 			/*Get the total amount*/
