@@ -6,6 +6,9 @@ class AccountsController extends CI_Controller
 		parent:: __construct();
 		$this->load->model('AccountModel');
 	}
+	public function index() {
+		redirect('AccountsController/view_login_form');
+	}
 	public function view_signup_form() {
 		$this->load->view('customer/signup_view');
 	}
