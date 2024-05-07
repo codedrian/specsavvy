@@ -169,7 +169,8 @@ class ProductModel extends CI_Model {
 
 		if ($this->db->affected_rows() > 0) {
 			return array(
-				'is_updated_successfully' => TRUE
+				'is_updated_successfully' => TRUE,
+				'newCsrfToken' => $this->security->get_csrf_hash()
 			);
 		}
 		else {
