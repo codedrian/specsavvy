@@ -162,7 +162,7 @@ class ProductModel extends CI_Model {
 			return null;
 		}
 	}
-	/*TODO: UPDATE and SET the quantity in cart table*/
+	/*NOTE: UPDATE and SET the quantity in cart table*/
 	public function modifyQuantity($cart_id, $quantity) {
 		$sql = "UPDATE `cart` SET quantity = ? WHERE `cart_id` = ?";
 		$query = $this->db->query($sql, array($quantity, $cart_id));
