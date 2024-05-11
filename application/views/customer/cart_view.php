@@ -21,7 +21,7 @@
 
 <script>
 	$(document).ready(function() {
-		getCartProductCount()
+		getCartProductCount();
 		getCartProducts();
 		processProductQuantityForm();
 
@@ -31,12 +31,11 @@
 				type: 'GET',
 				dataType: 'json',
 				success: function(response) {
-					console.log(response);
 					$.each(response.cart_items, function(index, cart) {
-						let cartItem = `<form class="product">
+						let cartItem = `<form class="product" method="post">
 											<input type="hidden" name="<?=$this->security->get_csrf_token_name();?>" value="<?=$this->security->get_csrf_hash();?>">
 											<input type="hidden" name="cart_id" value="${cart.cart_id}">
-											<input type="hidden" name="quantity" value="${cart.quantity}">
+											<input type="text" class="csrf" value="123">
 											<ul>
 												<li>
 													<img src="<?=base_url('${cart.image_url}');?>" alt="">
@@ -91,6 +90,8 @@
 			});
 		}
 		function updateProductQuantity() {
+			/*FIXME: WHEN USER INPUT QUANTITY TO UPDATE QUANTITY AND THEN UPDATE IT BY CLICKING THE IN/DECREASE BUTTON THE CSRF TOKEN VANISHED*/
+			/*TODO: SET A TIME DELAY BEFORE CLICKING AGAIN*/
 			$('.product').on('click', '.increase_quantity, .decrease_quantity', function() {
 				let quantityInput = $(this).closest('form').find('#quantity');
 				let quantity = quantityInput.attr('value');
@@ -107,29 +108,40 @@
 						return newValue;
 					});
 				}
-				updateTotal(quantityInput);
 				/*Submit the form when these buttons are clicked*/
-				$(this).closest('form').submit();
-				console.log($(this).closest('form'));
+				$(this).closest('.product').submit();
+				updateTotal(quantityInput);
+			});
+			$('.product').on('change', '#quantity', function() {
+				let quantityInput = $(this).closest('form').find('#quantity');
+				let userInput = $(this).val();
+				let newValue = quantityInput.attr('value', userInput);
+				$(this).closest('.product').submit();
+				updateTotal(quantityInput);
 			});
 		}
-
 		function processProductQuantityForm() {
 			$('.cart_items_form').on('submit', '.product', function(e) {
 				e.preventDefault();
-				alert('Form is submmitted');
-			/*$.ajax({
-				url: "<?=base_url('');?>ProductsController/modifyQuantity",
-				type: 'POST',
-				dataType: 'json',
-				data: productData,
-				success: function(response) {
-					console.log(response);
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					console.log('AJAX error:', textStatus, errorThrown);
-				}
-			});*/
+				let formData = new FormData(this);
+				$.ajax({
+					url: "<?=base_url('ProductsController/processProductQuantityForm');?>",
+					type: 'POST',
+					data: formData,
+					dataType: 'json',
+					contentType: false,
+					processData: false,
+					success: function(response) {
+						console.log(response);
+						$(".csrf").val(response.result.newCsrfToken);
+						$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.result.newCsrfToken);
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.log('AJAX error:', textStatus, errorThrown);
+					}
+				});
+				/* halts the event from bubbling up the DOM tree*/
+				return false;
 			})
 		}
 		function updateTotal(quantityInput) {
