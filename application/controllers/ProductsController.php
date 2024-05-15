@@ -157,7 +157,11 @@ class ProductsController extends CI_Controller
 		echo json_encode($data);
 	}
 	public function view_cart() {
-		$this->load->view('customer/cart_view');
+		if (!$this->session->userdata('is_log_in')) {
+			redirect('AdminsController/view_login_form');
+		}  else {
+			$this->load->view('customer/cart_view');
+		}
 	}
 	public function getCartProducts() {
 		$data['cart_items'] = $this->ProductModel->getCartProducts($this->customer_id);
