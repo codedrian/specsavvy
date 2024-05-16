@@ -49,7 +49,7 @@ defined("BASEPATH") or exit("No direct script access allowed");
 					$('.products_table').DataTable({
 						ajax: {
 							url: "<?=base_url('ProductsController/fetch_all_product');?>",
-							dataSrc: 'response'
+							dataSrc: 'products'
 						},
 						columns: [
 							/*todo: remove the div tag that contains the product name inside span*/

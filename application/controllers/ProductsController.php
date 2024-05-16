@@ -157,16 +157,23 @@ class ProductsController extends CI_Controller
 		echo json_encode($data);
 	}
 	public function view_cart() {
-		$this->load->view('customer/cart_view');
+		if (!$this->session->userdata('is_log_in')) {
+			redirect('AdminsController/view_login_form');
+		}  else {
+			$this->load->view('customer/cart_view');
+		}
 	}
 	public function getCartProducts() {
 		$data['cart_items'] = $this->ProductModel->getCartProducts($this->customer_id);
 		echo json_encode($data);
 	}
 	public function processProductQuantityForm() {
-		$cart_id = $this->input->post('cart_id', TRUE);
-		$quantity = $this->input->post('quantity', TRUE);
-		$data['result'] = $this->ProductModel->modifyQuantity($cart_id, $quantity);
+		$quantityInput = array(
+			'cart_id' => $this->input->post('cart_id', TRUE),
+			'quantity' => $this->input->post('quantity', TRUE)
+		);
+		$data['result'] = $this->ProductModel->modifyQuantity($quantityInput);
+		$data['cart_items'] = $this->ProductModel->getCartProducts($this->customer_id);
 		echo json_encode($data);
 	}
 }
