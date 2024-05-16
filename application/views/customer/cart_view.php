@@ -21,8 +21,9 @@
 
 <script>
 	$(document).ready(function() {
-		getCartProductCount();
+		let grandTotal = 0;
 		getCartProducts();
+		getCartProductCount();
 		processProductQuantityForm();
 
 		function getCartProducts() {
@@ -52,7 +53,7 @@
 														</li>
 														<li>
 															<label>Total Amount</label>
-															<span class="total_amount" data-price="${cart.price}" id="total_amount">₱${cart.total_amount}</span>
+															<span class="total_amount" data-price="${cart.price}" class="total_amount">₱${cart.total_amount}</span>
 														</li>
 														<li>
 															<button type="button" class="remove_item"></button>
@@ -66,9 +67,13 @@
 												</li>
 											</ul>
 										</form>`;
+						updateGrandTotal(cart.total_amount);
 						$('.cart_items_form').append(cartItem);
+						$('.order-summary').after(`<h4>${cart.name} <span class="total_amount ${cart.cart_id}">₱${cart.total_amount}</span></h4>`);
 					});
+					$('#grand-total').append(`<span>₱${grandTotal}</span>`);
 					updateProductQuantity();
+					console.log(grandTotal);
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log('AJAX Error:', textStatus, errorThrown);
@@ -123,6 +128,8 @@
 		function processProductQuantityForm() {
 			$('.cart_items_form').on('submit', '.product', function(e) {
 				e.preventDefault();
+				/*Resets the grandTotal global variable*/
+				grandTotal = 0;
 				let formData = new FormData(this);
 				$.ajax({
 					url: "<?=base_url('ProductsController/processProductQuantityForm');?>",
@@ -132,9 +139,16 @@
 					contentType: false,
 					processData: false,
 					success: function(response) {
-						console.log(response);
 						$(".csrf").val(response.result.newCsrfToken);
 						$("input[name='<?= $this->security->get_csrf_token_name() ?>']").val(response.result.newCsrfToken);
+						/*Get the updated total amount*/
+						/*This will run twice since the cart contains 2 products*/
+						$.each(response.cart_items, function(index, cart) {
+							/*call the updateGrandTotal*/
+							updateGrandTotal(cart.total_amount);
+						});
+						/*Update the grand total*/
+						$('#grand-total').html(`₱${grandTotal}`);
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
 						console.log('AJAX error:', textStatus, errorThrown);
@@ -146,11 +160,18 @@
 		}
 		function updateTotal(quantityInput) {
 			/*Get the total amount*/
-			let amountSpan =  quantityInput.closest('li').next().find('#total_amount');
+			let cart_id = quantityInput.data('cart_id');
+			/*orderAmountSpan targets the product amount in order summary*/
+			let orderAmountSpan = $('.checkout_form').find('.' +cart_id);
+			let amountSpan =  quantityInput.closest('li').next().find('.total_amount');
 			let quantity = parseInt(quantityInput.val(), 10);
 			let price = parseFloat(amountSpan.data('price'));
 			let newTotal = price * quantity;
 			amountSpan.text('₱' + newTotal)
+			orderAmountSpan.text('₱' + newTotal);
+		}
+		function updateGrandTotal(totalAmount) {
+			grandTotal += parseInt(totalAmount);
 		}
 	});
 </script>
@@ -178,7 +199,7 @@
 		<button class="show_cart"></button>
 		<section>
 			<div class="cart_items_form">
-				<!--TODO: INSERT  THE CART PRODUCTS HERE-->
+				<!--The cart items are displayed here.-->
 			</div>
 			<form class="checkout_form">
 				<h3>Shipping Information</h3>
@@ -193,11 +214,7 @@
 					</li>
 					<li>
 						<input type="text" name="address_1" required>
-						<label>Address 1</label>
-					</li>
-					<li>
-						<input type="text" name="address_2" required>
-						<label>Address 2</label>
+						<label>Address</label>
 					</li>
 					<li>
 						<input type="text" name="city" required>
@@ -205,17 +222,17 @@
 					</li>
 					<li>
 						<input type="text" name="state" required>
-						<label>State</label>
+						<label>Province</label>
 					</li>
 					<li>
 						<input type="text" name="zip_code" required>
 						<label>Zip Code</label>
 					</li>
 				</ul>
-				<h3>Order Summary</h3>
-				<h4>Items <span>$ 40</span></h4>
-				<h4>Shipping Fee <span>$ 5</span></h4>
-				<h4 class="total_amount">Total Amount <span>$ 45</span></h4>
+				<!--TODO: Display the products here-->
+				<h3 class="order-summary">Order Summary</h3>
+				<h4>Shipping Fee <span>₱ 5</span></h4>
+				<h4>Total Amount<span id="grand-total"></span>></h4>
 				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#card_details_modal">Proceed to Checkout</button>
 			</form>
 		</section>
@@ -254,7 +271,7 @@
 			</div>
 		</div>
 	</div>
-	<!--note: This is a signin modal-->
+	<!--This is a signin modal-->
 	<!--<div class="modal fade form_modal" id="login_modal" tabindex="-1" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
